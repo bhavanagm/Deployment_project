@@ -225,6 +225,40 @@ app.get('/test-image-urls', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-image-urls.html'));
 });
 
+// Debug route to check if files exist
+app.get('/debug-files', (req, res) => {
+  const fs = require('fs');
+  const path = require('path');
+  
+  const filesToCheck = [
+    'views/pickup.html',
+    'views/login.html',
+    'views/home.html',
+    'views/register.html',
+    'server.js',
+    'package.json'
+  ];
+  
+  const fileStatus = filesToCheck.map(file => {
+    const fullPath = path.join(__dirname, file);
+    return {
+      file: file,
+      exists: fs.existsSync(fullPath),
+      fullPath: fullPath
+    };
+  });
+  
+  res.json({
+    success: true,
+    workingDirectory: __dirname,
+    files: fileStatus,
+    environment: {
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT
+    }
+  });
+});
+
 // Debug route to check book image paths
 app.get('/debug-books', async (req, res) => {
   try {
@@ -580,6 +614,25 @@ app.post('/api/create-test-user', async (req, res) => {
       error: err.message
     });
   }
+});
+
+// Emergency test route for debugging
+app.get('/test-pickup', (req, res) => {
+  const fs = require('fs');
+  const pickupPath = path.join(__dirname, 'views', 'pickup.html');
+  const fileExists = fs.existsSync(pickupPath);
+  
+  res.send(`
+    <h1>🔍 Pickup Route Debug</h1>
+    <p><strong>Working Directory:</strong> ${__dirname}</p>
+    <p><strong>Pickup File Path:</strong> ${pickupPath}</p>
+    <p><strong>File Exists:</strong> ${fileExists ? '✅ YES' : '❌ NO'}</p>
+    <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+    <hr>
+    <p><a href="/pickup-request">🔗 Test Pickup Request Route</a></p>
+    <p><a href="/debug-files">🔗 Check All Files</a></p>
+    <p><a href="/login">🔗 Test Login Route</a></p>
+  `);
 });
 
 // ✅ Start server
