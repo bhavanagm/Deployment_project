@@ -607,10 +607,18 @@
 
   <!-- Script -->
   <script>
-    // Redirect if not logged in
-    if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
+    // Check if user is logged in via session
+    fetch('/api/current-user')
+      .then(response => {
+        if (!response.ok) {
+          // User not logged in, redirect to login page
+          window.location.href = '/login';
+        }
+      })
+      .catch(() => {
+        // Error checking auth, redirect to login
+        window.location.href = '/login';
+      });
 
     // Hamburger toggle
     const hamburger = document.getElementById("hamburger");
@@ -960,13 +968,39 @@
       }
 
       if (isValid) {
-        // Clear draft when form is successfully submitted
-        localStorage.removeItem('pickupFormDraft');
+        // Submit form to server
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '📤 Submitting...';
         
-        // Update confirmation message
-        document.getElementById('confirmBook').textContent = bookTitle;
-        document.getElementById('confirmName').textContent = userName;
-        document.getElementById('confirmEmail').textContent = email;
+        fetch('/api/pickup-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userName: userName,
+            bookTitle: bookTitle,
+            email: email,
+            pickupAddress: pickupAddress
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert('❌ Error: ' + data.error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📦 Submit Pickup Request';
+            return;
+          }
+          
+          // Clear draft when form is successfully submitted
+          localStorage.removeItem('pickupFormDraft');
+          
+          // Update confirmation message
+          document.getElementById('confirmBook').textContent = bookTitle;
+          document.getElementById('confirmName').textContent = userName;
+          document.getElementById('confirmEmail').textContent = email;
         
         // Add pickup details to confirmation
         const confirmMsg = document.getElementById('confirmationMsg');
