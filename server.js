@@ -111,6 +111,7 @@ app.post('/api/chatbot', (req, res) => {
 });
 
 // ✅ Page routes
+// ✅ Page routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'home.html'));
 });
@@ -132,30 +133,30 @@ app.get('/logout', (req, res) => {
   res.redirect('/home');
 });
 
-  app.get('/index', (req, res) => {
-    if (req.session.user) {
-      // Read the HTML file and inject user data
-      const fs = require('fs');
-      let html = fs.readFileSync(path.join(__dirname, 'views', 'index.html'), 'utf8');
-      
-      // Inject user data into the page
-      const userScript = `
-        <script>
-          window.currentUser = {
-            id: '${req.session.user.id}',
-            username: '${req.session.user.username}',
-            email: '${req.session.user.email}'
-          };
-          window.currentUserId = '${req.session.user.id}';
-        </script>
-      `;
-      
-      html = html.replace('</head>', `${userScript}</head>`);
-      res.send(html);
-    } else {
-      res.redirect('/login');
-    }
-  });
+app.get('/index', (req, res) => {
+  if (req.session.user) {
+    // Read the HTML file and inject user data
+    const fs = require('fs');
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'index.html'), 'utf8');
+    
+    // Inject user data into the page
+    const userScript = `
+      <script>
+        window.currentUser = {
+          id: '${req.session.user.id}',
+          username: '${req.session.user.username}',
+          email: '${req.session.user.email}'
+        };
+        window.currentUserId = '${req.session.user.id}';
+      </script>
+    `;
+    
+    html = html.replace('</head>', `${userScript}</head>`);
+    res.send(html);
+  } else {
+    res.redirect('/login');
+  }
+});
 
 app.get('/add-book', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'add-book.html'));
@@ -190,6 +191,14 @@ app.get('/profile', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'profile.html'));
 });
 
+// ✅ Debug / Test routes
+app.get('/test-pickup', (req, res) => {
+  res.send("🚚 Test pickup route is working!");
+});
+
+// Serves files from /debug folder if it exists
+app.use('/debug-files', express.static(path.join(__dirname, 'debug')));
+
 // 📊 Dashboard Route
 app.get('/dashboard', (req, res) => {
   if (req.session.user) {
@@ -223,40 +232,6 @@ app.get('/debug-gallery', (req, res) => {
 
 app.get('/test-image-urls', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-image-urls.html'));
-});
-
-// Debug route to check if files exist
-app.get('/debug-files', (req, res) => {
-  const fs = require('fs');
-  const path = require('path');
-  
-  const filesToCheck = [
-    'views/pickup.html',
-    'views/login.html',
-    'views/home.html',
-    'views/register.html',
-    'server.js',
-    'package.json'
-  ];
-  
-  const fileStatus = filesToCheck.map(file => {
-    const fullPath = path.join(__dirname, file);
-    return {
-      file: file,
-      exists: fs.existsSync(fullPath),
-      fullPath: fullPath
-    };
-  });
-  
-  res.json({
-    success: true,
-    workingDirectory: __dirname,
-    files: fileStatus,
-    environment: {
-      NODE_ENV: process.env.NODE_ENV,
-      PORT: process.env.PORT
-    }
-  });
 });
 
 // Debug route to check book image paths
@@ -614,25 +589,6 @@ app.post('/api/create-test-user', async (req, res) => {
       error: err.message
     });
   }
-});
-
-// Emergency test route for debugging
-app.get('/test-pickup', (req, res) => {
-  const fs = require('fs');
-  const pickupPath = path.join(__dirname, 'views', 'pickup.html');
-  const fileExists = fs.existsSync(pickupPath);
-  
-  res.send(`
-    <h1>🔍 Pickup Route Debug</h1>
-    <p><strong>Working Directory:</strong> ${__dirname}</p>
-    <p><strong>Pickup File Path:</strong> ${pickupPath}</p>
-    <p><strong>File Exists:</strong> ${fileExists ? '✅ YES' : '❌ NO'}</p>
-    <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-    <hr>
-    <p><a href="/pickup-request">🔗 Test Pickup Request Route</a></p>
-    <p><a href="/debug-files">🔗 Check All Files</a></p>
-    <p><a href="/login">🔗 Test Login Route</a></p>
-  `);
 });
 
 // ✅ Start server
