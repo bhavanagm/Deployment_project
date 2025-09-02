@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enhanced Book Gallery - BookSwap</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hamburger {
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 60px 20px;
+      gap: 20px;
+      transition: width 0.3s ease;
+      z-index: 1000;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+    }
+
+    .side-menu a {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      font-size: 18px;
+      text-decoration: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .side-menu a:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .side-menu.show {
+      width: 280px;
+    }
+
+    .side-menu.show a {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .gallery-header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      background: white;
+      margin: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .gallery-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 20px 0;
+    }
+
+    .filters select {
+      padding: 12px 16px;
+      border-radius: 25px;
+      border: 2px solid #e9ecef;
+      font-size: 16px;
+      background: white;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .filters select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .book-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .book-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .book-card:hover {
+      transform: translateY(-10px) rotateX(5deg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .book-image-container {
+      position: relative;
+      height: 320px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+    .book-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .book-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .image-overlay {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+
+    .book-type-badge {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+    }
+
+    .loading-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .book-info {
+      padding: 25px;
+    }
+
+    .book-info h3 {
+      font-size: 1.4rem;
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .book-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    .book-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .condition-badge {
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .condition-badge.new {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .condition-badge.good {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .condition-badge.fair {
+      background: #fde2e4;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .condition-badge.used {
+      background: #e2e3e5;
+      color: #383d41;
+      border: 1px solid #d6d8db;
+    }
+
+    .rating-display {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stars {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .rating-text {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .book-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-small {
+      padding: 12px 16px;
+      font-size: 13px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rate-book-btn {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .contact-user-btn {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .pickup-btn {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      color: white;
+    }
+
+    .btn-small:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .book-id {
+      font-size: 10px;
+      color: #999;
+      margin-top: 15px;
+      text-align: right;
+      font-family: monospace;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 100px;
+      left: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    }
+
+    .no-books {
+      text-align: center;
+      font-size: 24px;
+      color: #666;
+      padding: 80px 40px;
+      background: white;
+      margin: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .no-books::before {
+      content: "📚";
+      display: block;
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    footer {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+    }
+
+    /* Loading animation */
+    .image-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      color: #667eea;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .book-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .gallery-header h1 {
+        font-size: 2rem;
+      }
+
+      .book-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .back-btn {
+        position: static;
+        margin: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      📚 BookSwap Gallery
+    </div>
+    <div class="hamburger" id="hamburger">☰</div>
+  </header>
+
+  <!-- Side Menu -->
+  <div id="sideMenu" class="side-menu">
+    <a href="/profile">👤 My Profile</a>
+    <a href="/add-book">➕ Add New Book</a>
+    <a href="/gallery">📚 Browse Gallery</a>
+    <a href="/pickup-request">🚚 Pickup Request</a>
+    <a href="/dashboard">📊 Dashboard</a>
+    <a href="/chatbot">🤖 Chat with Elina</a>
+  </div>
+
+  <!-- Back Button -->
+  <button id="backBtn" class="back-btn">🔙 Back to Dashboard</button>
+
+  <!-- Gallery Header & Filters -->
+  <section class="gallery-header">
+    <h1>📖 Available Books</h1>
+    <p>Discover amazing books shared by our community</p>
+    <div class="filters">
+      <select id="filterGenre">
+        <option value="">All Genres</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Science">Science</option>
+        <option value="Self-help">Self-help</option>
+        <option value="Biography">Biography</option>
+        <option value="History">History</option>
+        <option value="Romance">Romance</option>
+        <option value="Mystery">Mystery</option>
+        <option value="Fantasy">Fantasy</option>
+        <option value="Travel">Travel</option>
+        <option value="Art">Art</option>
+        <option value="Cooking">Cooking</option>
+        <option value="Business">Business</option>
+        <option value="Poetry">Poetry</option>
+      </select>
+      <select id="filterCondition">
+        <option value="">All Conditions</option>
+        <option value="New">New</option>
+        <option value="Good">Good</option>
+        <option value="Fair">Fair</option>
+        <option value="Used">Used</option>
+      </select>
+      <select id="filterType">
+        <option value="">All Types</option>
+        <option value="Donate">Donations</option>
+        <option value="Swap">Swaps</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Book Gallery -->
+  <section class="book-gallery" id="bookGallery">
+    <!-- Books will be loaded here dynamically -->
+  </section>
+
+  <!-- No books message -->
+  <div class="no-books" id="noBooksMessage" style="display:none;">
+    No books found matching your criteria.
+    <br><small>Try adjusting your filters or check back later!</small>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 BookSwap Platform | Connecting Book Lovers Worldwide 🌍</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    let allBooks = [];
+    let imageCache = new Map();
+
+    // Menu functionality
+    const hamburger = document.getElementById("hamburger");
+    const sideMenu = document.getElementById("sideMenu");
+
+    hamburger.addEventListener("click", () => {
+      sideMenu.classList.toggle("show");
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!sideMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        sideMenu.classList.remove("show");
+      }
+    });
+
+    // Back button
+    const backBtn = document.getElementById("backBtn");
+    backBtn.addEventListener("click", () => {
+      window.location.href = "/dashboard";
+    });
+
+    // Load books from API
+    async function loadBooks(filters = {}) {
+      try {
+        const queryParams = new URLSearchParams(filters).toString();
+        const response = await fetch(`/api/books?${queryParams}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          allBooks = data.books;
+          await displayBooks(data.books);
+        } else {
+          console.error('Error loading books:', data.message);
+          showNoBooks('Failed to load books from database.');
+        }
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        showNoBooks('Network error. Please check your connection.');
+      }
+    }
+
+    // Display books with real cover images
+    async function displayBooks(books) {
+      const gallery = document.getElementById('bookGallery');
+      const noBooksMsg = document.getElementById('noBooksMessage');
+      
+      if (books.length === 0) {
+        gallery.innerHTML = '';
+        noBooksMsg.style.display = 'block';
+        return;
+      }
+      
+      noBooksMsg.style.display = 'none';
+      
+      // Create cards with loading placeholders first
+      gallery.innerHTML = books.map(book => createBookCard(book, true)).join('');
+      
+      // Load actual images asynchronously
+      const imagePromises = books.map((book, index) => loadBookImage(book, index));
+      await Promise.allSettled(imagePromises);
+    }
+
+    // Create individual book card HTML
+    function createBookCard(book, isLoading = false) {
+      const bookId = book._id ? book._id.slice(-6) : 'N/A';
+      const ownerInfo = book.userId ? book.userId.username : 'Unknown';
+      const averageRating = book.averageRating || 0;
+      const totalRatings = book.totalRatings || 0;
+      
+      const starDisplay = generateStars(averageRating);
+      const displayTitle = truncateText(book.title || 'Untitled', 30);
+      const displayAuthor = truncateText(book.author || 'Unknown Author', 25);
+      
+      const imageContent = isLoading 
+        ? `<div class="image-loading">
+             <div class="loading-spinner"></div>
+             <span style="margin-left: 15px;">Loading cover...</span>
+           </div>`
+        : `<img src="${getPlaceholderImage(book)}" alt="${book.title}" />`;
+      
+      return `
+        <div class="book-card" data-book-id="${book._id}" data-genre="${book.genre || ''}" 
+             data-condition="${book.condition || ''}" data-type="${book.type || ''}">
+          
+          <div class="book-image-container" id="img-container-${bookId}">
+            ${imageContent}
+            <div class="image-overlay">
+              <span class="book-type-badge">${book.type ? book.type.toUpperCase() : 'BOOK'}</span>
+            </div>
+          </div>
+          
+          <div class="book-info">
+            <h3 title="${book.title}">${displayTitle}</h3>
+            
+            <div class="book-meta">
+              <div class="book-meta-item">
+                <span>✍️</span>
+                <span title="${book.author}">${displayAuthor}</span>
+              </div>
+              <div class="book-meta-item">
+                <span>📂</span>
+                <span>${book.genre || 'Unknown'}</span>
+              </div>
+              <div class="book-meta-item">
+                <span>📍</span>
+                <span>${book.location || 'N/A'}</span>
+              </div>
+              <div class="book-meta-item">
+                <span>👤</span>
+                <span title="Book Owner">${ownerInfo}</span>
+              </div>
+            </div>
+            
+            <div class="book-meta-item" style="margin: 10px 0;">
+              <span>🏷️</span>
+              <span class="condition-badge ${(book.condition || '').toLowerCase()}">
+                ${book.condition || 'Unknown'}
+              </span>
+            </div>
+            
+            <div class="rating-display">
+              <div class="stars">${starDisplay}</div>
+              <div class="rating-text">
+                ${averageRating.toFixed(1)}/5 • ${totalRatings} ${totalRatings === 1 ? 'rating' : 'ratings'}
+              </div>
+            </div>
+            
+            <div class="book-actions">
+              <button class="rate-book-btn btn-small" onclick="showRatingModal('${book._id}', '${book.title}')">
+                ⭐ Rate
+              </button>
+              ${book.userId && book.userId._id ? `
+                <button class="contact-user-btn btn-small" onclick="contactUser('${book.userId._id}', '${book.userId.username}')">
+                  💬 Contact
+                </button>
+              ` : ''}
+              <button class="pickup-btn btn-small" onclick="requestPickup('${book._id}', '${book.title}')">
+                📦 Pickup
+              </button>
+            </div>
+            
+            <div class="book-id">ID: BOOK-${bookId}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Load actual book cover image
+    async function loadBookImage(book, index) {
+      const bookId = book._id ? book._id.slice(-6) : 'N/A';
+      const container = document.getElementById(`img-container-${bookId}`);
+      
+      if (!container) {
+        console.warn(`Container not found for book: ${book.title}`);
+        return;
+      }
+      
+      console.log(`🔄 Loading image for: "${book.title}" by "${book.author || 'Unknown'}"`);
+      
+      try {
+        let imageUrl;
+        
+        // Check if user uploaded their own image first
+        if (book.image && book.image.startsWith('/uploads')) {
+          console.log(`📸 Using uploaded image: ${book.image}`);
+          imageUrl = book.image;
+        } else {
+          // Try to fetch real book cover
+          console.log(`🔍 Fetching cover from API...`);
+          imageUrl = await fetchBookCoverImage(book.title, book.author);
+        }
+        
+        console.log(`✅ Final image URL: ${imageUrl}`);
+        
+        // Update the image container with the actual image
+        const imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        imgElement.alt = book.title;
+        imgElement.style.cssText = 'width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease;';
+        
+        imgElement.onload = function() {
+          console.log(`✅ Image loaded successfully for: ${book.title}`);
+          this.style.opacity = '1';
+        };
+        
+        imgElement.onerror = function() {
+          console.log(`❌ Image failed to load, using fallback for: ${book.title}`);
+          this.src = getPlaceholderImage(book);
+          this.style.opacity = '1';
+        };
+        
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'image-overlay';
+        overlay.innerHTML = `<span class="book-type-badge">${book.type ? book.type.toUpperCase() : 'BOOK'}</span>`;
+        
+        // Clear loading content and add new elements
+        container.innerHTML = '';
+        container.appendChild(imgElement);
+        container.appendChild(overlay);
+        
+      } catch (error) {
+        console.error('❌ Error loading image for book:', book.title, error);
+        // Fallback to themed placeholder
+        const fallbackImg = document.createElement('img');
+        fallbackImg.src = getPlaceholderImage(book);
+        fallbackImg.alt = book.title;
+        fallbackImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'image-overlay';
+        overlay.innerHTML = `<span class="book-type-badge">${book.type ? book.type.toUpperCase() : 'BOOK'}</span>`;
+        
+        container.innerHTML = '';
+        container.appendChild(fallbackImg);
+        container.appendChild(overlay);
+      }
+    }
+
+    // Fetch book cover from our API
+    async function fetchBookCoverImage(title, author) {
+      const cacheKey = `${title}-${author}`;
+      
+      if (imageCache.has(cacheKey)) {
+        return imageCache.get(cacheKey);
+      }
+      
+      try {
+        // Try with author first, fallback to title only
+        let response, data;
+        
+        if (author && author !== 'Unknown Author') {
+          console.log(`🔍 Fetching cover for "${title}" by "${author}"`);
+          response = await fetch(`/api/book-image/${encodeURIComponent(title)}/${encodeURIComponent(author)}`);
+        } else {
+          console.log(`🔍 Fetching cover for "${title}" (no author)`);
+          response = await fetch(`/api/book-image/${encodeURIComponent(title)}`);
+        }
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        data = await response.json();
+        
+        if (data.success && data.imageUrl) {
+          imageCache.set(cacheKey, data.imageUrl);
+          console.log(`✅ Got image URL: ${data.imageUrl}`);
+          return data.imageUrl;
+        } else {
+          console.log('❌ No image URL in response:', data);
+          throw new Error('No image URL returned');
+        }
+        
+      } catch (error) {
+        console.error('❌ Failed to fetch book cover:', error);
+        const fallbackImage = getPlaceholderImage({ title, author, genre: 'Book' });
+        imageCache.set(cacheKey, fallbackImage);
+        return fallbackImage;
+      }
+    }
+
+    // Generate themed placeholder image
+    function getPlaceholderImage(book) {
+      const themes = {
+        'fiction': { color: '#4a90e2', emoji: '📖' },
+        'biography': { color: '#f39c12', emoji: '👤' },
+        'history': { color: '#d35400', emoji: '🏛️' },
+        'science': { color: '#27ae60', emoji: '🔬' },
+        'self-help': { color: '#16a085', emoji: '🎯' },
+        'business': { color: '#34495e', emoji: '💼' },
+        'cooking': { color: '#e67e22', emoji: '👨‍🍳' },
+        'travel': { color: '#3498db', emoji: '✈️' },
+        'art': { color: '#e74c3c', emoji: '🎨' },
+        'romance': { color: '#e91e63', emoji: '💕' },
+        'mystery': { color: '#8e44ad', emoji: '🔍' },
+        'thriller': { color: '#2c3e50', emoji: '⚡' },
+        'fantasy': { color: '#9b59b6', emoji: '🧙‍♂️' },
+        'poetry': { color: '#f1c40f', emoji: '✍️' }
+      };
+      
+      const genre = (book.genre || 'book').toLowerCase();
+      const theme = themes[genre] || { color: '#6c757d', emoji: '📚' };
+      
+      const cleanTitle = truncateText(book.title || 'Untitled', 18);
+      const cleanAuthor = truncateText(book.author || '', 15);
+      
+      const svg = `
+        <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bookGrad-${genre}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${theme.color};stop-opacity:0.9" />
+              <stop offset="100%" style="stop-color:${theme.color};stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="300" height="400" fill="url(#bookGrad-${genre})" rx="15" ry="15"/>
+          <text x="50%" y="100" font-family="Arial" font-size="48" text-anchor="middle" fill="white">${theme.emoji}</text>
+          <text x="50%" y="200" font-family="Georgia" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${cleanTitle}</text>
+          ${cleanAuthor ? `<text x="50%" y="240" font-family="Arial" font-size="16" text-anchor="middle" fill="rgba(255,255,255,0.9)">by ${cleanAuthor}</text>` : ''}
+          <rect x="40" y="320" width="220" height="2" fill="rgba(255,255,255,0.5)"/>
+          <text x="50%" y="350" font-family="Arial" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.8)">BookSwap Collection</text>
+        </svg>
+      `;
+      
+      return 'data:image/svg+xml;base64,' + btoa(svg);
+    }
+
+    // Utility functions
+    function generateStars(rating) {
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+      
+      let stars = '';
+      for (let i = 0; i < fullStars; i++) stars += '⭐';
+      if (hasHalfStar) stars += '💫';
+      for (let i = 0; i < emptyStars; i++) stars += '☆';
+      
+      return stars;
+    }
+
+    function truncateText(text, maxLength) {
+      if (!text) return '';
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+
+    // Filter functionality
+    function filterBooks() {
+      const genre = document.getElementById('filterGenre').value;
+      const condition = document.getElementById('filterCondition').value;
+      const type = document.getElementById('filterType').value;
+      
+      let filteredBooks = allBooks;
+      
+      if (genre) {
+        filteredBooks = filteredBooks.filter(book => 
+          book.genre && book.genre.toLowerCase().includes(genre.toLowerCase())
+        );
+      }
+      
+      if (condition) {
+        filteredBooks = filteredBooks.filter(book => 
+          book.condition && book.condition.toLowerCase().includes(condition.toLowerCase())
+        );
+      }
+      
+      if (type) {
+        filteredBooks = filteredBooks.filter(book => 
+          book.type && book.type.toLowerCase().includes(type.toLowerCase())
+        );
+      }
+      
+      displayBooks(filteredBooks);
+    }
+
+    // Event listeners
+    document.getElementById('filterGenre').addEventListener('change', filterBooks);
+    document.getElementById('filterCondition').addEventListener('change', filterBooks);
+    document.getElementById('filterType').addEventListener('change', filterBooks);
+
+    // Action handlers
+    function showRatingModal(bookId, bookTitle) {
+      alert(`⭐ Rating feature for "${bookTitle}" coming soon!\n\nThis will open a modal where you can rate the book and write a review.`);
+    }
+
+    function contactUser(userId, username) {
+      alert(`💬 Contact feature coming soon!\n\nYou'll be able to send messages to ${username} about their books.`);
+    }
+
+    function requestPickup(bookId, bookTitle) {
+      if (confirm(`📦 Request pickup for "${bookTitle}"?\n\nThis will take you to the pickup request form.`)) {
+        window.location.href = `/pickup-request?bookId=${bookId}&title=${encodeURIComponent(bookTitle)}`;
+      }
+    }
+
+    function showNoBooks(message = 'No books found matching your criteria.') {
+      const gallery = document.getElementById('bookGallery');
+      const noBooksMsg = document.getElementById('noBooksMessage');
+      
+      gallery.innerHTML = '';
+      noBooksMsg.innerHTML = message + '<br><small>Try adjusting your filters or check back later!</small>';
+      noBooksMsg.style.display = 'block';
+    }
+
+    // Load books on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBooks();
+    });
+  </script>
+</body>
+</html>

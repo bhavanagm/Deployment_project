@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - BookSwap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Animation */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="books" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="none"/><text x="10" y="15" font-size="16" text-anchor="middle" fill="rgba(255,255,255,0.05)">📚</text></pattern></defs><rect width="100" height="100" fill="url(%23books)"/></svg>');
+      opacity: 0.1;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10;
+      transform: translateY(0);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .login-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      display: block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .brand-title {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .brand-subtitle {
+      color: #64748b;
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      letter-spacing: 0.025em;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 400;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: #667eea;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .form-input:focus + .input-icon,
+    .form-input:not(:placeholder-shown) + .input-icon {
+      color: #667eea;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 25px -5px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 32px 0;
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .divider span {
+      padding: 0 16px;
+      font-weight: 500;
+    }
+
+    .signup-link {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .signup-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .signup-link a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+    }
+
+    .signup-link a:hover::after {
+      width: 100%;
+    }
+
+    .signup-link a:hover {
+      color: #5a67d8;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #166534;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #991b1b;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .floating-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: floatShapes 20s infinite linear;
+    }
+
+    .shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      left: 20%;
+      animation-delay: 5s;
+    }
+
+    .shape:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      left: 70%;
+      animation-delay: 10s;
+    }
+
+    .shape:nth-child(4) {
+      width: 40px;
+      height: 40px;
+      left: 80%;
+      animation-delay: 15s;
+    }
+
+    @keyframes floatShapes {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+      .login-container {
+        margin: 20px;
+        padding: 32px 24px;
+        max-width: none;
+      }
+
+      .brand-title {
+        font-size: 1.75rem;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin: auto;
+      border: 2px solid transparent;
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 1s ease infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Password toggle button */
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+    }
+
+    .password-toggle:hover {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    .password-toggle:focus {
+      outline: none;
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Background Shapes -->
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+
+  <!-- Login Form Container -->
+  <div class="login-container" id="loginBox">
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <div class="logo">📚</div>
+      <h1 class="brand-title">BookSwap</h1>
+      <p class="brand-subtitle">Share knowledge, spread joy through books</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="successMessage" class="alert alert-success">
+      ✅
+      <span></span>
+    </div>
+    
+    <div id="errorMessage" class="alert alert-error">
+      ❌
+      <span></span>
+    </div>
+    
+    <!-- Login Form -->
+    <form method="POST" action="/login" id="loginForm">
+      <div class="form-group">
+        <label for="username" class="form-label">Username or Email</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            name="username" 
+            id="username" 
+            class="form-input" 
+            required 
+            placeholder="Enter your username or email"
+            autocomplete="username"
+          />
+          <span class="input-icon">👤</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            name="password" 
+            id="password" 
+            class="form-input" 
+            required 
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            style="padding-right: 90px;"
+          />
+          <span class="input-icon">🔒</span>
+          <button type="button" class="password-toggle" id="passwordToggle">
+            <span id="passwordIcon">👁️</span>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn" id="loginButton">
+        <span>Sign In</span>
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>New to BookSwap?</span>
+    </div>
+
+    <!-- Signup Link -->
+    <div class="signup-link">
+      <a href="/register">
+        ➕ Create Account
+      </a>
+    </div>
+  </div>
+
+  <script src="/js/login.js"></script>
+
+</body>
+</html>

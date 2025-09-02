@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book Swap & Donation Platform</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #4b6cb7;
+      color: white;
+      padding: 15px 25px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #4b6cb7, #182848);
+      color: white;
+      padding: 4rem 1rem;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #ffc107;
+      color: black;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    /* Carousel */
+    .carousel-section {
+      background: #f5f5f5;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .carousel-wrapper {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+
+    .carousel-track {
+      display: flex;
+      animation: scroll 30s linear infinite;
+      width: max-content;
+    }
+
+    .carousel-track img {
+      height: 220px;
+      width: 150px;
+      object-fit: cover;
+      margin: 0 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Hamburger Menu */
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: white;
+      margin: 2px 0;
+      transition: 0.3s;
+      border-radius: 2px;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: #4b6cb7;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 2rem;
+        transition: right 0.3s ease;
+        z-index: 1000;
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: 1rem 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: 1rem 2rem;
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+      }
+
+      .nav-links li a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+    }
+
+    /* Feature Cards Hover Effects */
+    .feature-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
+    }
+
+    .feature-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      filter: brightness(1.1);
+    }
+
+    .feature-btn:active {
+      transform: translateY(0px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Pulse Animation for feature cards */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .feature-card:nth-child(odd) {
+      animation: pulse 3s ease-in-out infinite alternate;
+    }
+
+    .feature-card:nth-child(even) {
+      animation: pulse 3s ease-in-out infinite alternate-reverse;
+    }
+
+    /* Call to Action Buttons Hover Effects */
+    .cta-primary:hover {
+      background: #e6ac00 !important;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+    }
+
+    .cta-secondary:hover {
+      background: rgba(255,255,255,0.3) !important;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive adjustments for features */
+    @media (max-width: 768px) {
+      .feature-card {
+        padding: 1.5rem !important;
+      }
+      
+      .feature-card h3 {
+        font-size: 1.2rem !important;
+      }
+      
+      .feature-btn {
+        padding: 10px 20px !important;
+        font-size: 0.9rem !important;
+      }
+    }
+
+    /* Footer */
+    footer {
+      background: #2b2b2b;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">📚 BookSwap</div>
+    
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-toggle" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-menu">
+      <li><a href="/index">🏠 Home</a></li>
+      <li><a href="/add-book">➕ Add Book</a></li>
+      <li><a href="/gallery">📖 Gallery</a></li>
+      <li><a href="/pickup-request">🚚 Pickup</a></li>
+      <li><a href="/dashboard">📊 Dashboard</a></li>
+      <li><a href="/profile">👤 Profile</a></li>
+      <li><a href="/chatbot">🤖 Chat</a></li>
+      <li><a href="/logout">🚺 Logout</a></li>
+    </ul>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Welcome to Book Swap & Donation Platform</h1>
+    <p>Give books a new life! List your used books, donate to others, or swap for something new.</p>
+    <div style="margin-top: 2rem;">
+      <a href="/dashboard" class="btn-primary" style="margin: 0.5rem;">📊 View Dashboard</a>
+      <a href="/add-book" class="btn-primary" style="margin: 0.5rem;">➕ Add a Book</a>
+      <a href="/gallery" class="btn-primary" style="margin: 0.5rem;">📖 Browse Gallery</a>
+    </div>
+  </section>
+
+   <!-- Carousel Section -->
+<section class="carousel-section">
+  <h2>📚 Popular Books</h2>
+  <div class="carousel-track">
+    <img src="/uploads/book01.jpeg" alt="Book-id 1">
+    <img src="/uploads/book02.jpeg" alt="Book-id 2">
+    <img src="/uploads/book03.jpeg" alt="Book-id 3">
+    <img src="/uploads/book04.jpeg" alt="Book-id 4">
+    <img src="/uploads/book05.jpeg" alt="Book-id 5">
+    <img src="/uploads/book06.jpeg" alt="Book-id 6">
+    <img src="/uploads/book07.jpeg" alt="Book-id 7">
+    <img src="/uploads/book08.jpeg" alt="Book-id 8">
+    <img src="/uploads/book09.jpeg" alt="Book-id 9">
+    <img src="/uploads/book010.jpeg" alt="Book-id 9">
+  </div>
+</section>
+  
+  <!-- Features Section -->
+  <section style="padding: 3rem 1rem; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+      <h2 style="color: #4b6cb7; margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">✨ Exciting New Features</h2>
+      <p style="color: #666; font-size: 1.1rem; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">Discover amazing new ways to connect, share, and explore books in our enhanced platform!</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        <!-- Personal Dashboard -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Personal Dashboard</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Track your books, achievements, and community contributions all in one personalized space.</p>
+          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">📊 Try Dashboard</button>
+        </div>
+        
+        <!-- Rating System -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">⭐</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Smart Rating System</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Rate and review books to help the community discover amazing reads and hidden gems.</p>
+          <button onclick="window.location.href='/gallery'" class="feature-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">⭐ Start Rating</button>
+        </div>
+        
+        <!-- Messaging System -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Instant Messaging</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Connect directly with book owners and fellow readers in real-time conversations.</p>
+          <button onclick="window.location.href='/profile'" class="feature-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">💬 Try Messaging</button>
+        </div>
+        
+        <!-- Achievements -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Achievement System</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Earn badges, unlock levels, and showcase your contributions to the reading community.</p>
+          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🏆 View Achievements</button>
+        </div>
+        
+        <!-- Smart Notifications -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔔</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Smart Notifications</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Stay updated with intelligent notifications about messages, requests, and community activity.</p>
+          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🔔 Enable Notifications</button>
+        </div>
+        
+        <!-- AI Chatbot -->
+        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">AI Reading Assistant</h3>
+          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Get instant help, personalized book recommendations, and smart reading insights.</p>
+          <button onclick="window.location.href='/chatbot'" class="feature-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🤖 Chat with Elina</button>
+        </div>
+      </div>
+      
+      <!-- Call to Action -->
+      <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white; text-align: center;">
+        <h3 style="margin-bottom: 1rem; font-size: 1.8rem;">🚀 Ready to Explore?</h3>
+        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; opacity: 0.9;">Join thousands of book lovers already using our platform!</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button onclick="window.location.href='/add-book'" class="cta-primary" style="background: #ffc107; color: #333; border: none; padding: 15px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem;">➕ Add Your First Book</button>
+          <button onclick="window.location.href='/gallery'" class="cta-secondary" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 15px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem;">📚 Browse Books</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 BookSwap Platform | Built with ❤️ by Bhavana G M</p>
+  </footer>
+
+
+  <!-- Hamburger Menu JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerToggle = document.getElementById('hamburger-toggle');
+      const navMenu = document.getElementById('nav-menu');
+      
+      if (hamburgerToggle && navMenu) {
+        hamburgerToggle.addEventListener('click', function() {
+          // Toggle active class on hamburger button
+          hamburgerToggle.classList.toggle('active');
+          
+          // Toggle active class on navigation menu
+          navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link (mobile)
+        const navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            hamburgerToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+          });
+        });
+        
+        // Close menu when clicking outside (mobile)
+        document.addEventListener('click', function(event) {
+          const isClickInsideNav = navMenu.contains(event.target);
+          const isClickOnHamburger = hamburgerToggle.contains(event.target);
+          
+          if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+            hamburgerToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

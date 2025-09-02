@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Image Test</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        .test-section { 
+            background: white; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-image { 
+            width: 200px; 
+            height: 250px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            margin: 10px;
+            border: 2px solid #ddd;
+        }
+        .image-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+        .status { 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            font-weight: bold;
+        }
+        .success { background: #28a745; color: white; }
+        .error { background: #dc3545; color: white; }
+        .info { background: #17a2b8; color: white; }
+        h1 { color: #3f51b5; }
+        h2 { color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 BookSwap Gallery Image Test</h1>
+        
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div id="testResults">
+                <span class="status info">Testing...</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Image URL Types Being Tested</h2>
+            <div id="urlTests">
+                <div>
+                    <strong>Local Images:</strong>
+                    <div class="image-grid" id="localImages">
+                        <!-- Local images will be loaded here -->
+                    </div>
+                </div>
+                
+                <div>
+                    <strong>External Images:</strong>
+                    <div class="image-grid" id="externalImages">
+                        <!-- External images will be loaded here -->
+                    </div>
+                </div>
+                
+                <div>
+                    <strong>Fallback Images:</strong>
+                    <div class="image-grid" id="fallbackImages">
+                        <!-- Fallback images will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📖 Gallery Preview</h2>
+            <div id="galleryPreview">
+                <!-- Gallery preview will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testBookImages() {
+            const testResults = document.getElementById('testResults');
+            testResults.innerHTML = '<span class="status info">Loading books from API...</span>';
+
+            try {
+                // Test API connection
+                const response = await fetch('/api/books');
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load books');
+                }
+
+                const books = data.books;
+                testResults.innerHTML = `
+                    <span class="status success">✅ API Connected</span>
+                    <span class="status info">📚 ${books.length} books loaded</span>
+                `;
+
+                // Categorize images
+                const localImages = books.filter(book => book.image && book.image.startsWith('/uploads'));
+                const externalImages = books.filter(book => book.image && book.image.startsWith('http'));
+                const noImages = books.filter(book => !book.image);
+
+                console.log('Local images:', localImages.length);
+                console.log('External images:', externalImages.length);
+                console.log('No images:', noImages.length);
+
+                // Display local images
+                displayImageSection('localImages', localImages, 'Local Upload');
+
+                // Display external images
+                displayImageSection('externalImages', externalImages, 'External URL');
+
+                // Display fallback examples
+                displayFallbackImages();
+
+                // Display gallery preview
+                displayGalleryPreview(books.slice(0, 6));
+
+            } catch (error) {
+                console.error('Test failed:', error);
+                testResults.innerHTML = `<span class="status error">❌ Test failed: ${error.message}</span>`;
+            }
+        }
+
+        function displayImageSection(containerId, books, type) {
+            const container = document.getElementById(containerId);
+            if (books.length === 0) {
+                container.innerHTML = `<p>No ${type} images found</p>`;
+                return;
+            }
+
+            container.innerHTML = books.slice(0, 5).map(book => `
+                <div style="text-align: center;">
+                    <img src="${book.image}" 
+                         alt="${book.title}" 
+                         class="test-image"
+                         onload="this.style.border='2px solid #28a745'"
+                         onerror="this.style.border='2px solid #dc3545'; this.src='https://via.placeholder.com/200x250/dc3545/ffffff?text=ERROR'">
+                    <br><small>${book.title}</small>
+                </div>
+            `).join('');
+        }
+
+        function displayFallbackImages() {
+            const fallbackContainer = document.getElementById('fallbackImages');
+            const genres = ['Fiction', 'Science', 'Biography', 'Art', 'Travel'];
+            
+            fallbackContainer.innerHTML = genres.map(genre => `
+                <div style="text-align: center;">
+                    <img src="https://via.placeholder.com/200x250/4a90e2/ffffff?text=${genre.toUpperCase()}" 
+                         alt="${genre} Fallback" 
+                         class="test-image"
+                         onload="this.style.border='2px solid #28a745'">
+                    <br><small>${genre}</small>
+                </div>
+            `).join('');
+        }
+
+        function displayGalleryPreview(books) {
+            const container = document.getElementById('galleryPreview');
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                    ${books.map(book => `
+                        <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="height: 200px; overflow: hidden; border-radius: 6px; margin-bottom: 10px;">
+                                <img src="${book.image || 'https://via.placeholder.com/300x400/3f51b5/ffffff?text=No+Image'}" 
+                                     alt="${book.title}" 
+                                     style="width: 100%; height: 100%; object-fit: cover;"
+                                     onerror="this.src='https://via.placeholder.com/300x400/dc3545/ffffff?text=ERROR'">
+                            </div>
+                            <h4 style="margin: 5px 0;">${book.title || 'Untitled'}</h4>
+                            <p style="margin: 5px 0; color: #666;">${book.author || 'Unknown Author'}</p>
+                            <span style="background: #3f51b5; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px;">
+                                ${book.genre || 'N/A'}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', testBookImages);
+    </script>
+</body>
+</html>

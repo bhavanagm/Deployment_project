@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elina Chatbot</title>
+  <link rel="stylesheet" href="/css/chatbot.css" />
+</head>
+<body>
+
+  <!-- Page Content -->
+  <h1 style="text-align: center;">Welcome to Elina Chatbot Assistant</h1>
+  <p style="text-align: center;">Click on the chatbot icon below to begin chatting with Elina!</p>
+
+  <!-- Floating Chatbot Icon -->
+  <div id="chat-launcher">
+    <img src="https://i.imgur.com/UuXv9eki.png" alt="Elina Chatbot" id="elina-icon">
+  </div>
+
+  <!-- Chatbot Window -->
+  <div id="chat-widget" class="hidden">
+    <div id="chat-header">
+<img src="/images/elina.png" alt="Elina Chatbot" class="bot-icon" />
+      <span>Elina Assistant</span>
+      <button id="close-chat">&times;</button>
+    </div>
+    <div id="chat-box"></div>
+    <div id="chat-input">
+      <input type="text" id="user-input" placeholder="Ask something..." />
+      <button id="send-btn">Send</button>
+      <button id="voice-btn">🎤</button>
+    </div>
+  </div>
+
+  <!-- Chatbot Logic -->
+  <script src="/js/script.js"></script>
+
+</body>
+</html>

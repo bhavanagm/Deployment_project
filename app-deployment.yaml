@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: donate-books-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: donate-books-app
+  template:
+    metadata:
+      labels:
+        app: donate-books-app
+    spec:
+      containers:
+      - name: donate-books-app
+        image: bhavanagm15/donatebooks-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongodb-service:27017/donatebooks"
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: donate-books-service
+spec:
+  selector:
+    app: donate-books-app
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer

@@ -1,0 +1,87 @@
+<!-- views/add-book.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Book - BookSwap</title>
+  <link rel="stylesheet" href="/css/add-book.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">📚 BookSwap</div>
+    <div class="menu-toggle" id="hamburger">
+      <div></div><div></div><div></div>
+    </div>
+    <nav id="sideMenu">
+      <a href="/index">Home</a>
+      <a href="/add-book">Add Book</a>
+      <a href="/gallery">Gallery</a>
+      <a href="/pickup-request">Pickup</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <h2>Add a New Book</h2>
+    <form id="addBookForm" method="POST" action="/api/add-book" enctype="multipart/form-data">
+      <input type="hidden" name="bookId" id="bookId" />
+
+      <label for="title">Book Title*</label>
+      <input type="text" id="title" name="title" required />
+
+      <label for="author">Author*</label>
+      <input type="text" id="author" name="author" required />
+
+      <label for="genre">Genre*</label>
+      <select id="genre" name="genre" required>
+        <option value="">Select</option>
+        <option>Fiction</option>
+        <option>Biography</option>
+        <option>Self-help</option>
+        <option>Science</option>
+        <option>Inspirational</option>
+        <option>Travel</option>
+        <option>Art</option>
+        <option>Cooking</option>
+        <option>Business</option>
+        <option>Architecture</option>
+        <option>History</option>
+        <option>Poetry</option>
+        <option>Drama</option>
+      </select>
+
+      <label for="condition">Condition*</label>
+      <select id="condition" name="condition" required>
+        <option value="">Select</option>
+        <option>New</option>
+        <option>Good</option>
+        <option>Fair</option>
+      </select>
+
+      <label for="type">Type*</label>
+      <select id="type" name="type" required>
+        <option value="">Select</option>
+        <option value="donate">Donate</option>
+        <option value="swap">Swap</option>
+      </select>
+
+      <label for="location">Location*</label>
+      <input type="text" id="location" name="location" required />
+
+      <label for="contact">Contact Info (Optional)</label>
+      <input type="text" id="contact" name="contact" />
+
+      <label for="image">Upload Book Image</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+      <img id="previewImg" alt="Preview" style="max-width: 150px; display: none;" />
+
+      <button type="submit">📤 Submit</button>
+    </form>
+
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+  </main>
+
+  <footer>&copy; 2025 BookSwap Platform | Built with ❤️</footer>
+
+ <script src="/js/add-book.js"></script> 
+</body>
+</html>

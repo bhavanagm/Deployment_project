@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pickup Request - BookSwap</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hamburger {
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      z-index: 1001;
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 60px 20px;
+      gap: 20px;
+      transition: width 0.3s ease;
+      z-index: 1000;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+    }
+
+    .side-menu a {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      font-size: 18px;
+      text-decoration: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .side-menu a:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .side-menu.show {
+      width: 280px;
+    }
+
+    .side-menu.show a {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 100px;
+      left: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    }
+
+    .pickup-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 200px);
+      padding: 40px 20px;
+    }
+
+    .pickup-form-section {
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
+    }
+
+    .confirmation {
+      text-align: center;
+      background-color: #e8f5e9;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Remove pickup image section for centered form */
+
+    footer {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: white;
+      text-align: center;
+      padding: 30px;
+      margin-top: 50px;
+    }
+
+    /* Enhanced Pickup Form Styles */
+    .book-selection {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      border: 2px solid #e9ecef;
+    }
+
+    .book-selection h3 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .book-search {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #bookSearch {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .search-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .book-suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .book-suggestion {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .book-suggestion:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .selected-books {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .selected-book {
+      background: #4caf50;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .remove-book {
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: auto;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .btn-save-draft {
+      padding: 14px 20px;
+      background-color: #ff9800;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      flex: 1;
+    }
+
+    .btn-save-draft:hover {
+      background-color: #f57c00;
+    }
+
+    .btn-submit {
+      flex: 2;
+    }
+
+    .status-tracker {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .status-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .status-step {
+      text-align: center;
+      flex: 1;
+    }
+
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: white;
+      font-size: 18px;
+    }
+
+    .step-icon.active {
+      background: #4caf50;
+    }
+
+    .step-icon.completed {
+      background: #2196f3;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    @media (max-width: 768px) {
+      .pickup-wrapper {
+        padding: 20px 10px;
+        min-height: auto;
+      }
+
+      .pickup-form-section {
+        padding: 30px 20px;
+        margin: 20px 0;
+      }
+
+      .back-btn {
+        position: static;
+        margin: 20px;
+        align-self: flex-start;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .book-suggestions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">📚 BookSwap</div>
+    <div class="hamburger" id="hamburger">☰</div>
+  </header>
+
+  <!-- Back Button -->
+  <button class="back-btn" onclick="history.back()">🔙 Back</button>
+
+  <!-- Side Menu -->
+  <div id="sideMenu" class="side-menu">
+    <a href="/profile">👤 My Profile</a>
+    <a href="/add-book">➕ Add New Book</a>
+    <a href="/gallery">📚 Browse Gallery</a>
+    <a href="/pickup-request">🚚 Pickup Request</a>
+    <a href="/dashboard">📊 Dashboard</a>
+    <a href="/chatbot">🤖 Chat with Elina</a>
+  </div>
+
+  <!-- Main Section with Form & Image -->
+  <div class="pickup-wrapper">
+    <!-- Pickup Form -->
+    <section class="pickup-form-section">
+      <h2>📦 Enhanced Pickup Request Form</h2>
+      
+      <!-- Book Selection Section -->
+      <div class="book-selection">
+        <h3>📚 Select Books for Pickup</h3>
+        <div class="book-search">
+          <input type="text" id="bookSearch" placeholder="🔍 Search available books...">
+          <button type="button" id="searchBtn" class="search-btn">Search</button>
+        </div>
+        <div id="bookSuggestions" class="book-suggestions"></div>
+        <div id="selectedBooks" class="selected-books"></div>
+      </div>
+
+      <form id="pickupForm" novalidate>
+        <div class="form-group">
+          <label for="pickupType">Pickup Type *</label>
+          <select id="pickupType" name="pickupType" required>
+            <option value="">Select pickup type</option>
+            <option value="single">📖 Single Book</option>
+            <option value="multiple">📚 Multiple Books</option>
+            <option value="donation">💝 Donation Collection</option>
+            <option value="swap">🔄 Book Swap</option>
+          </select>
+          <div class="error" id="pickupTypeError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="bookTitle">Book Title(s) *</label>
+          <textarea id="bookTitle" name="bookTitle" rows="2" placeholder="Enter book titles (one per line for multiple books)" required></textarea>
+          <div class="error" id="bookTitleError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="userName">Your Full Name *</label>
+          <input type="text" id="userName" name="userName" placeholder="Enter your full name" required>
+          <div class="error" id="userNameError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          <div class="error" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="mobile">Mobile Number *</label>
+          <input type="tel" id="mobile" name="mobile" placeholder="+91 XXXXX XXXXX" required>
+          <div class="error" id="mobileError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="pickupAddress">Complete Pickup Address *</label>
+          <textarea id="pickupAddress" name="pickupAddress" rows="4" placeholder="Enter complete address including landmark" required></textarea>
+          <div class="error" id="addressError"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pickupDate">Preferred Date *</label>
+            <input type="date" id="pickupDate" name="pickupDate" required>
+            <div class="error" id="dateError"></div>
+          </div>
+          <div class="form-group">
+            <label for="pickupTime">Preferred Time *</label>
+            <select id="pickupTime" name="pickupTime" required>
+              <option value="">Select time slot</option>
+              <option value="09:00-12:00">🌅 Morning (9:00 AM - 12:00 PM)</option>
+              <option value="12:00-15:00">🌞 Afternoon (12:00 PM - 3:00 PM)</option>
+              <option value="15:00-18:00">🌇 Evening (3:00 PM - 6:00 PM)</option>
+              <option value="18:00-21:00">🌙 Night (6:00 PM - 9:00 PM)</option>
+            </select>
+            <div class="error" id="timeError"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="specialInstructions">Special Instructions</label>
+          <textarea id="specialInstructions" name="specialInstructions" rows="3" placeholder="Any special instructions for pickup (optional)"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="notifications" name="notifications" checked>
+            📱 Send SMS notifications for pickup updates
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="terms" name="terms" required>
+            ✅ I agree to the <a href="#" onclick="showTerms()">terms and conditions</a> *
+          </label>
+          <div class="error" id="termsError"></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">📦 Submit Pickup Request</button>
+          <button type="button" class="btn-save-draft" onclick="saveDraft()">💾 Save as Draft</button>
+        </div>
+      </form>
+
+      <!-- Confirmation Message -->
+      <div id="confirmationMsg" class="confirmation hidden">
+        <h3>✅ Pickup Request Submitted!</h3>
+        <p>Thank you <span id="confirmName"></span>. We’ve received your request to pick up <strong><span id="confirmBook"></span></strong>.</p>
+        <p>Confirmation sent to <span id="confirmEmail"></span>.</p>
+      </div>
+    </section>
+
+    <!-- Illustration Right Side -->
+    <div class="pickup-image"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 BookSwap Platform | Built with ❤️ by Bhavana G M</p>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    // Redirect if not logged in
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    // Hamburger toggle
+    const hamburger = document.getElementById("hamburger");
+    const sideMenu = document.getElementById("sideMenu");
+
+    hamburger.addEventListener("click", () => {
+      sideMenu.classList.toggle("show");
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!sideMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        sideMenu.classList.remove("show");
+      }
+    });
+
+    // Form Validation & Confirmation
+    const form = document.getElementById('pickupForm');
+    const confirmMsg = document.getElementById('confirmationMsg');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const bookTitle = document.getElementById('bookTitle').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const pickupAddress = document.getElementById('pickupAddress').value.trim();
+
+      const errors = {
+        bookTitle: document.getElementById('bookTitleError'),
+        userName: document.getElementById('userNameError'),
+        email: document.getElementById('emailError'),
+        mobile: document.getElementById('mobileError'),
+        address: document.getElementById('addressError'),
+      };
+
+      for (let key in errors) errors[key].textContent = '';
+
+      let isValid = true;
+
+      if (bookTitle === '') {
+        errors.bookTitle.textContent = 'Book title is required.';
+        isValid = false;
+      }
+
+      if (userName === '' || !/^[A-Za-z ]+$/.test(userName)) {
+        errors.userName.textContent = 'Enter a valid name (letters only).';
+        isValid = false;
+      }
+
+      if (email === '' || !/^\S+@\S+\.\S+$/.test(email)) {
+        errors.email.textContent = 'Enter a valid email address.';
+        isValid = false;
+      }
+
+      if (!/^\d{10}$/.test(mobile)) {
+        errors.mobile.textContent = 'Enter a valid 10-digit mobile number.';
+        isValid = false;
+      }
+
+      if (pickupAddress === '') {
+        errors.address.textContent = 'Pickup address is required.';
+        isValid = false;
+      }
+
+      if (isValid) {
+        document.getElementById('confirmBook').textContent = bookTitle;
+        document.getElementById('confirmName').textContent = userName;
+        document.getElementById('confirmEmail').textContent = email;
+
+        form.classList.add('hidden');
+        confirmMsg.classList.remove('hidden');
+      }
+    });
+
+    // Enhanced Pickup Form Features
+    const availableBooks = [
+      { title: "Atomic Habits", author: "James Clear", genre: "Self-Help" },
+      { title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction" },
+      { title: "Rich Dad Poor Dad", author: "Robert Kiyosaki", genre: "Finance" },
+      { title: "You Can Win", author: "Shiv Khera", genre: "Motivation" },
+      { title: "The Power of Now", author: "Eckhart Tolle", genre: "Spirituality" },
+      { title: "Think and Grow Rich", author: "Napoleon Hill", genre: "Business" },
+      { title: "Sapiens", author: "Yuval Noah Harari", genre: "History" },
+      { title: "1984", author: "George Orwell", genre: "Fiction" }
+    ];
+
+    let selectedBooks = [];
+
+    // Book search functionality
+    document.getElementById('searchBtn').addEventListener('click', searchBooks);
+    document.getElementById('bookSearch').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchBooks();
+      }
+    });
+
+    function searchBooks() {
+      const query = document.getElementById('bookSearch').value.toLowerCase().trim();
+      const suggestions = document.getElementById('bookSuggestions');
+      
+      if (query === '') {
+        suggestions.innerHTML = '';
+        return;
+      }
+
+      const filteredBooks = availableBooks.filter(book => 
+        book.title.toLowerCase().includes(query) || 
+        book.author.toLowerCase().includes(query) ||
+        book.genre.toLowerCase().includes(query)
+      );
+
+      if (filteredBooks.length === 0) {
+        suggestions.innerHTML = `
+          <div style="padding: 20px; text-align: center; color: #666;">
+            📚 No books found matching "${query}". Try different keywords.
+          </div>
+        `;
+        return;
+      }
+
+      suggestions.innerHTML = filteredBooks.map(book => `
+        <div class="book-suggestion" onclick="selectBook('${book.title}', '${book.author}')">
+          <strong>${book.title}</strong><br>
+          <small>by ${book.author} • ${book.genre}</small>
+        </div>
+      `).join('');
+    }
+
+    function selectBook(title, author) {
+      const bookInfo = `${title} by ${author}`;
+      
+      if (selectedBooks.includes(bookInfo)) {
+        alert('📚 Book already selected!');
+        return;
+      }
+
+      selectedBooks.push(bookInfo);
+      updateSelectedBooks();
+      updateBookTitleField();
+      
+      // Clear search
+      document.getElementById('bookSearch').value = '';
+      document.getElementById('bookSuggestions').innerHTML = '';
+    }
+
+    function updateSelectedBooks() {
+      const container = document.getElementById('selectedBooks');
+      container.innerHTML = selectedBooks.map(book => `
+        <div class="selected-book">
+          📖 ${book}
+          <span class="remove-book" onclick="removeBook('${book}')">&times;</span>
+        </div>
+      `).join('');
+    }
+
+    function removeBook(bookInfo) {
+      selectedBooks = selectedBooks.filter(book => book !== bookInfo);
+      updateSelectedBooks();
+      updateBookTitleField();
+    }
+
+    function updateBookTitleField() {
+      document.getElementById('bookTitle').value = selectedBooks.join('\n');
+    }
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('pickupDate').min = today;
+
+    // Auto-fill user data if available
+    window.addEventListener('load', function() {
+      // You can integrate with your user session data here
+      const userData = {
+        name: 'Bhavana G M',
+        email: 'bhavana@example.com',
+        mobile: '+91 98765 43210'
+      };
+      
+      // Auto-fill if user data is available
+      if (userData.name) document.getElementById('userName').value = userData.name;
+      if (userData.email) document.getElementById('email').value = userData.email;
+      if (userData.mobile) document.getElementById('mobile').value = userData.mobile;
+    });
+
+    // Save draft functionality
+    function saveDraft() {
+      const formData = {
+        pickupType: document.getElementById('pickupType').value,
+        bookTitle: document.getElementById('bookTitle').value,
+        userName: document.getElementById('userName').value,
+        email: document.getElementById('email').value,
+        mobile: document.getElementById('mobile').value,
+        pickupAddress: document.getElementById('pickupAddress').value,
+        pickupDate: document.getElementById('pickupDate').value,
+        pickupTime: document.getElementById('pickupTime').value,
+        specialInstructions: document.getElementById('specialInstructions').value,
+        selectedBooks: selectedBooks
+      };
+
+      localStorage.setItem('pickupFormDraft', JSON.stringify(formData));
+      alert('💾 Draft saved successfully! You can continue later.');
+    }
+
+    // Load draft functionality
+    function loadDraft() {
+      const draft = localStorage.getItem('pickupFormDraft');
+      if (draft) {
+        const formData = JSON.parse(draft);
+        
+        document.getElementById('pickupType').value = formData.pickupType || '';
+        document.getElementById('bookTitle').value = formData.bookTitle || '';
+        document.getElementById('userName').value = formData.userName || '';
+        document.getElementById('email').value = formData.email || '';
+        document.getElementById('mobile').value = formData.mobile || '';
+        document.getElementById('pickupAddress').value = formData.pickupAddress || '';
+        document.getElementById('pickupDate').value = formData.pickupDate || '';
+        document.getElementById('pickupTime').value = formData.pickupTime || '';
+        document.getElementById('specialInstructions').value = formData.specialInstructions || '';
+        
+        if (formData.selectedBooks) {
+          selectedBooks = formData.selectedBooks;
+          updateSelectedBooks();
+        }
+        
+        alert('📋 Draft loaded successfully!');
+      }
+    }
+
+    // Check for saved draft on page load
+    window.addEventListener('load', function() {
+      const hasDraft = localStorage.getItem('pickupFormDraft');
+      if (hasDraft) {
+        if (confirm('📋 You have a saved draft. Would you like to load it?')) {
+          loadDraft();
+        }
+      }
+    });
+
+    // Terms and conditions modal
+    function showTerms() {
+      alert(`📋 Terms and Conditions:\n\n1. Pickup requests are subject to availability\n2. Please be available at the specified time\n3. Books should be in good condition\n4. Cancellation policy: 24 hours notice required\n5. Contact support for any issues\n\n✅ By agreeing, you accept all terms.`);
+    }
+
+    // Enhanced form validation
+    function validateForm() {
+      const pickupType = document.getElementById('pickupType').value;
+      const pickupDate = document.getElementById('pickupDate').value;
+      const pickupTime = document.getElementById('pickupTime').value;
+      const terms = document.getElementById('terms').checked;
+      
+      let isValid = true;
+      const errors = {
+        pickupType: document.getElementById('pickupTypeError'),
+        date: document.getElementById('dateError'),
+        time: document.getElementById('timeError'),
+        terms: document.getElementById('termsError')
+      };
+
+      // Clear previous errors
+      Object.values(errors).forEach(error => error.textContent = '');
+
+      if (!pickupType) {
+        errors.pickupType.textContent = 'Please select a pickup type.';
+        isValid = false;
+      }
+
+      if (!pickupDate) {
+        errors.date.textContent = 'Please select a pickup date.';
+        isValid = false;
+      } else {
+        const selectedDate = new Date(pickupDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < today) {
+          errors.date.textContent = 'Pickup date cannot be in the past.';
+          isValid = false;
+        }
+      }
+
+      if (!pickupTime) {
+        errors.time.textContent = 'Please select a pickup time slot.';
+        isValid = false;
+      }
+
+      if (!terms) {
+        errors.terms.textContent = 'You must agree to the terms and conditions.';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // Update form submission to include new validations
+    document.getElementById('pickupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Run enhanced validation
+      if (!validateForm()) {
+        return;
+      }
+
+      const bookTitle = document.getElementById('bookTitle').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const pickupAddress = document.getElementById('pickupAddress').value.trim();
+      const pickupDate = document.getElementById('pickupDate').value;
+      const pickupTime = document.getElementById('pickupTime').value;
+
+      const errors = {
+        bookTitle: document.getElementById('bookTitleError'),
+        userName: document.getElementById('userNameError'),
+        email: document.getElementById('emailError'),
+        mobile: document.getElementById('mobileError'),
+        address: document.getElementById('addressError')
+      };
+
+      for (let key in errors) errors[key].textContent = '';
+
+      let isValid = true;
+
+      if (bookTitle === '') {
+        errors.bookTitle.textContent = 'Book title is required.';
+        isValid = false;
+      }
+
+      if (userName === '' || !/^[A-Za-z ]+$/.test(userName)) {
+        errors.userName.textContent = 'Enter a valid name (letters only).';
+        isValid = false;
+      }
+
+      if (email === '' || !/^\S+@\S+\.\S+$/.test(email)) {
+        errors.email.textContent = 'Enter a valid email address.';
+        isValid = false;
+      }
+
+      if (!/^[+]?[0-9]{10,15}$/.test(mobile.replace(/\s/g, ''))) {
+        errors.mobile.textContent = 'Enter a valid mobile number (10-15 digits).';
+        isValid = false;
+      }
+
+      if (pickupAddress === '') {
+        errors.address.textContent = 'Pickup address is required.';
+        isValid = false;
+      }
+
+      if (isValid) {
+        // Clear draft when form is successfully submitted
+        localStorage.removeItem('pickupFormDraft');
+        
+        // Update confirmation message
+        document.getElementById('confirmBook').textContent = bookTitle;
+        document.getElementById('confirmName').textContent = userName;
+        document.getElementById('confirmEmail').textContent = email;
+        
+        // Add pickup details to confirmation
+        const confirmMsg = document.getElementById('confirmationMsg');
+        confirmMsg.innerHTML = `
+          <h3>✅ Pickup Request Submitted Successfully!</h3>
+          <p><strong>📦 Request ID:</strong> PU${Date.now()}</p>
+          <p><strong>👤 Name:</strong> ${userName}</p>
+          <p><strong>📧 Email:</strong> ${email}</p>
+          <p><strong>📚 Books:</strong> ${bookTitle}</p>
+          <p><strong>📅 Date:</strong> ${new Date(pickupDate).toLocaleDateString()}</p>
+          <p><strong>🕐 Time:</strong> ${pickupTime}</p>
+          <p><strong>🚚 Status:</strong> <span style="color: #ff9800;">Processing</span></p>
+          <br>
+          <p>📱 You will receive SMS updates on your mobile number.</p>
+          <p>💬 Our team will contact you within 24 hours to confirm the pickup.</p>
+        `;
+
+        // Hide form and show confirmation
+        document.querySelector('.book-selection').style.display = 'none';
+        document.getElementById('pickupForm').style.display = 'none';
+        confirmMsg.classList.remove('hidden');
+        
+        // Scroll to confirmation
+        confirmMsg.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    console.log('✅ Enhanced pickup form loaded successfully!');
+  </script>
+</body>
+</html>

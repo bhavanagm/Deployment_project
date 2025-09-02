@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Image URLs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .image-test {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            width: 200px;
+        }
+        .image-test img {
+            width: 180px;
+            height: 200px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+        .url-display {
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+            margin: 5px 0;
+        }
+        .status {
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Image URL Testing</h1>
+    
+    <div class="test-container">
+        <h2>Test Different Image URL Formats</h2>
+        <div id="imageTests"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>Available Images in /uploads</h2>
+        <div id="availableImages"></div>
+    </div>
+
+    <script>
+        // Test different URL formats
+        const testUrls = [
+            '/uploads/book01.jpeg',
+            'http://localhost:3000/uploads/book01.jpeg',
+            '/uploads/book02.jpeg',
+            'http://localhost:3000/uploads/book02.jpeg',
+            '/uploads/book03.jpeg',
+            'https://via.placeholder.com/180x200/3f51b5/ffffff?text=Placeholder'
+        ];
+
+        const availableImages = [
+            'book01.jpeg', 'book02.jpeg', 'book03.jpeg', 'book04.jpeg', 'book05.jpeg',
+            'book06.jpeg', 'book07.jpeg', 'book08.jpeg', 'book09.jpeg', 'book010.jpeg'
+        ];
+
+        function createImageTest(url, description) {
+            const container = document.createElement('div');
+            container.className = 'image-test';
+            
+            const title = document.createElement('h3');
+            title.textContent = description;
+            container.appendChild(title);
+            
+            const urlDisplay = document.createElement('div');
+            urlDisplay.className = 'url-display';
+            urlDisplay.textContent = url;
+            container.appendChild(urlDisplay);
+            
+            const img = document.createElement('img');
+            img.src = url;
+            
+            const status = document.createElement('div');
+            status.className = 'status';
+            status.textContent = 'Loading...';
+            container.appendChild(status);
+            
+            img.onload = function() {
+                status.className = 'status success';
+                status.textContent = `✅ Loaded successfully (${img.naturalWidth}x${img.naturalHeight})`;
+            };
+            
+            img.onerror = function() {
+                status.className = 'status error';
+                status.textContent = '❌ Failed to load';
+                
+                // Try fallback
+                const fallback = 'https://via.placeholder.com/180x200/dc3545/ffffff?text=ERROR';
+                if (img.src !== fallback) {
+                    img.src = fallback;
+                    status.textContent = '❌ Failed - using fallback';
+                }
+            };
+            
+            container.appendChild(img);
+            return container;
+        }
+
+        // Test different URL formats
+        const testsContainer = document.getElementById('imageTests');
+        testUrls.forEach((url, index) => {
+            const test = createImageTest(url, `Test ${index + 1}`);
+            testsContainer.appendChild(test);
+        });
+
+        // Test available images
+        const availableContainer = document.getElementById('availableImages');
+        availableImages.forEach((filename, index) => {
+            const url = `/uploads/${filename}`;
+            const test = createImageTest(url, filename);
+            availableContainer.appendChild(test);
+        });
+
+        // Console logging for debugging
+        console.log('Testing image URLs...');
+        console.log('Base URL:', window.location.origin);
+        console.log('Test URLs:', testUrls);
+    </script>
+</body>
+</html>

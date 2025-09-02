@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Loading Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .test-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .test-result {
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 5px;
+      background: #f8f9fa;
+    }
+    
+    .test-image {
+      max-width: 200px;
+      max-height: 300px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .loading {
+      color: #007bff;
+    }
+    
+    .success {
+      color: #28a745;
+      background: #d4edda;
+    }
+    
+    .error {
+      color: #dc3545;
+      background: #f8d7da;
+    }
+    
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>📚 Image Loading Test</h1>
+    <p>Testing the book cover image generation and loading functionality.</p>
+    
+    <button onclick="testImageGeneration()">🧪 Test Image Generation</button>
+    <button onclick="testAPICall()">🔗 Test API Call</button>
+    <button onclick="testGalleryLoad()">📖 Test Gallery Loading</button>
+    
+    <div id="testResults"></div>
+  </div>
+  
+  <script>
+    const resultsDiv = document.getElementById('testResults');
+    
+    function addResult(title, content, status = 'loading') {
+      const result = document.createElement('div');
+      result.className = `test-result ${status}`;
+      result.innerHTML = `<h3>${title}</h3>${content}`;
+      resultsDiv.appendChild(result);
+      return result;
+    }
+    
+    async function testImageGeneration() {
+      const result = addResult('🎨 SVG Image Generation Test', 'Testing local SVG generation...', 'loading');
+      
+      try {
+        // Test local SVG generation
+        const testBook = {
+          title: 'Harry Potter and the Philosopher\'s Stone',
+          author: 'J.K. Rowling',
+          genre: 'Fantasy'
+        };
+        
+        const svgImage = getPlaceholderImage(testBook);
+        
+        result.className = 'test-result success';
+        result.innerHTML = `
+          <h3>✅ SVG Image Generation - Success</h3>
+          <p>Generated SVG image for "${testBook.title}"</p>
+          <img src="${svgImage}" alt="Test Image" class="test-image">
+        `;
+      } catch (error) {
+        result.className = 'test-result error';
+        result.innerHTML = `
+          <h3>❌ SVG Image Generation - Failed</h3>
+          <p>Error: ${error.message}</p>
+        `;
+      }
+    }
+    
+    async function testAPICall() {
+      const result = addResult('🔗 API Call Test', 'Testing book image API endpoint...', 'loading');
+      
+      try {
+        const response = await fetch('/api/book-image/Harry%20Potter/J.K.%20Rowling');
+        const data = await response.json();
+        
+        if (data.success) {
+          result.className = 'test-result success';
+          result.innerHTML = `
+            <h3>✅ API Call - Success</h3>
+            <p>Title: ${data.title}</p>
+            <p>Author: ${data.author}</p>
+            <p>Image URL: <a href="${data.imageUrl}" target="_blank">View Image</a></p>
+            <img src="${data.imageUrl}" alt="API Test Image" class="test-image">
+          `;
+        } else {
+          throw new Error(data.error || 'Unknown API error');
+        }
+      } catch (error) {
+        result.className = 'test-result error';
+        result.innerHTML = `
+          <h3>❌ API Call - Failed</h3>
+          <p>Error: ${error.message}</p>
+        `;
+      }
+    }
+    
+    async function testGalleryLoad() {
+      const result = addResult('📖 Gallery Loading Test', 'Testing gallery book loading...', 'loading');
+      
+      try {
+        const response = await fetch('/api/books');
+        const data = await response.json();
+        
+        if (data.success && data.books.length > 0) {
+          const book = data.books[0]; // Take the first book
+          const imageUrl = await fetchBookCoverImage(book.title, book.author);
+          
+          result.className = 'test-result success';
+          result.innerHTML = `
+            <h3>✅ Gallery Loading - Success</h3>
+            <p>Loaded ${data.books.length} books from database</p>
+            <p>Sample book: "${book.title}" by ${book.author || 'Unknown'}</p>
+            <img src="${imageUrl}" alt="Gallery Test Image" class="test-image">
+          `;
+        } else {
+          throw new Error('No books found or API failed');
+        }
+      } catch (error) {
+        result.className = 'test-result error';
+        result.innerHTML = `
+          <h3>❌ Gallery Loading - Failed</h3>
+          <p>Error: ${error.message}</p>
+        `;
+      }
+    }
+    
+    // Copy the functions from gallery
+    async function fetchBookCoverImage(title, author) {
+      try {
+        let response;
+        if (author && author !== 'Unknown Author') {
+          response = await fetch(`/api/book-image/${encodeURIComponent(title)}/${encodeURIComponent(author)}`);
+        } else {
+          response = await fetch(`/api/book-image/${encodeURIComponent(title)}`);
+        }
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.imageUrl) {
+          return data.imageUrl;
+        } else {
+          throw new Error('No image URL returned');
+        }
+      } catch (error) {
+        console.error('Failed to fetch book cover:', error);
+        return getPlaceholderImage({ title, author, genre: 'Book' });
+      }
+    }
+    
+    function getPlaceholderImage(book) {
+      const themes = {
+        'fiction': { color: '#4a90e2', emoji: '📖' },
+        'biography': { color: '#f39c12', emoji: '👤' },
+        'history': { color: '#d35400', emoji: '🏛️' },
+        'science': { color: '#27ae60', emoji: '🔬' },
+        'fantasy': { color: '#9b59b6', emoji: '🧙‍♂️' },
+        'romance': { color: '#e91e63', emoji: '💕' },
+        'mystery': { color: '#8e44ad', emoji: '🔍' }
+      };
+      
+      const genre = (book.genre || 'book').toLowerCase();
+      const theme = themes[genre] || { color: '#6c757d', emoji: '📚' };
+      
+      const cleanTitle = truncateText(book.title || 'Untitled', 18);
+      const cleanAuthor = truncateText(book.author || '', 15);
+      
+      const svg = `
+        <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bookGrad-${genre}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${theme.color};stop-opacity:0.9" />
+              <stop offset="100%" style="stop-color:${theme.color};stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="300" height="400" fill="url(#bookGrad-${genre})" rx="15" ry="15"/>
+          <text x="50%" y="100" font-family="Arial" font-size="48" text-anchor="middle" fill="white">${theme.emoji}</text>
+          <text x="50%" y="200" font-family="Georgia" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${cleanTitle}</text>
+          ${cleanAuthor ? `<text x="50%" y="240" font-family="Arial" font-size="16" text-anchor="middle" fill="rgba(255,255,255,0.9)">by ${cleanAuthor}</text>` : ''}
+          <rect x="40" y="320" width="220" height="2" fill="rgba(255,255,255,0.5)"/>
+          <text x="50%" y="350" font-family="Arial" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.8)">BookSwap Collection</text>
+        </svg>
+      `;
+      
+      return 'data:image/svg+xml;base64,' + btoa(svg);
+    }
+    
+    function truncateText(text, maxLength) {
+      if (!text) return '';
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+  </script>
+</body>
+</html>

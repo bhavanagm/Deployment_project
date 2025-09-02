@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration</title>
+</head>
+<body>
+    <h1>Simple Registration Test</h1>
+    <form method="POST" action="/register">
+        <p>
+            <label>Username:</label><br>
+            <input type="text" name="username" value="testuser" required>
+        </p>
+        <p>
+            <label>Email:</label><br>
+            <input type="email" name="email" value="test@test.com" required>
+        </p>
+        <p>
+            <label>Location:</label><br>
+            <input type="text" name="location" value="TestCity" required>
+        </p>
+        <p>
+            <label>Password:</label><br>
+            <input type="password" name="password" value="Test123" required>
+        </p>
+        <p>
+            <button type="submit">Register</button>
+        </p>
+    </form>
+    
+    <p><a href="http://localhost:3000/register">Back to main register</a></p>
+</body>
+</html>
