@@ -1,18 +1,42 @@
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const apiRoutes = require('./routes/api');
-const User = require('./models/user'); // ✅ Add your User model
-const Book = require('./models/book'); // ✅ Add your Book model
+const User = require('./models/user');
+const Book = require('./models/book');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || "mongodb://mongo:27017/donatebooks")
-.then(() => console.log('✅ Connected to MongoDB database'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+// ✅ MongoDB connection with better error handling
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || "mongodb://mongodb-service:27017/donatebooks";
+    console.log('🔄 Attempting MongoDB connection to:', mongoURI.replace(/:\/\/.*@/, '://***:***@'));
+    
+    const conn = await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      bufferMaxEntries: 0 // Disable mongoose buffering
+    });
+    
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}:${conn.connection.port}/${conn.connection.name}`);
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error.message);
+    console.error('❌ Full error:', error);
+    process.exit(1);
+  }
+};
+
+// Connect to database
+connectDB();
 
 // ✅ Middlewares
 app.use(express.json());
