@@ -1,0 +1,112 @@
+---
+- name: Deploy Book Swap & Donation Platform with Docker Compose
+  hosts: app_servers
+  become: yes
+  vars:
+    repo_url: "https://github.com/bhavanagm/Deployment_project.git"   # your GitHub repo
+    repo_branch: "master"
+    app_user: "bookswap"
+    app_dir: "/opt/bookswap"
+    use_docker_package: true   # set false if you want custom docker install steps
+
+  tasks:
+
+    - name: Ensure apt cache is up to date
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages (git, unzip, curl)
+      apt:
+        name:
+          - git
+          - unzip
+          - curl
+        state: present
+
+    - name: Install Docker (using distro package docker.io) and docker-compose plugin
+      apt:
+        name:
+          - docker.io
+          - docker-compose-plugin
+        state: present
+      when: use_docker_package
+
+    - name: Ensure docker service is enabled and started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create application user (no-login) if not existing
+      user:
+        name: "{{ app_user }}"
+        system: yes
+        create_home: no
+        shell: /usr/sbin/nologin
+
+    - name: Ensure application directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ ansible_user | default('root') }}"
+        mode: '0755'
+
+    - name: Clone or update application repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_branch }}"
+        force: yes
+        update: yes
+      register: git_result
+
+    - name: Ensure owner of app dir is current user
+      file:
+        path: "{{ app_dir }}"
+        owner: "{{ ansible_user | default('root') }}"
+        recurse: yes
+
+    - name: (Optional) Copy environment file if provided in playbook dir
+      copy:
+        src: ./env/.env
+        dest: "{{ app_dir }}/.env"
+        mode: '0644'
+      ignore_errors: yes
+
+    - name: Ensure Docker Compose networks/volumes directories exist (if any)
+      file:
+        path: "{{ app_dir }}/data"
+        state: directory
+        mode: '0755'
+      ignore_errors: yes
+
+    - name: Pull/build and start containers with Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        build: true
+        restarted: yes
+        pull: true
+      register: compose_result
+      ignore_errors: yes
+
+    - name: Fallback - Run docker compose up -d if community.docker not available
+      command: docker compose up -d --build
+      args:
+        chdir: "{{ app_dir }}"
+      when: compose_result is failed or compose_result is skipped
+
+    - name: Wait for container to be healthy (simple pause)
+      pause:
+        seconds: 6
+
+    - name: Show simple status of containers
+      command: docker compose ps
+      args:
+        chdir: "{{ app_dir }}"
+      register: ps_out
+      changed_when: false
+
+    - name: Print docker compose ps output
+      debug:
+        var: ps_out.stdout_lines

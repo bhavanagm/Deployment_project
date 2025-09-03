@@ -411,8 +411,16 @@
         // Generate star display
         const starDisplay = generateStars(averageRating);
         
-        // Start with a loading placeholder
-        const placeholderImage = createThemedBookImage(book.title || 'Loading...', book.author || '', book.genre || 'Book');
+        // Create initial image URL - try uploaded image first, then fallback to themed image
+        let imageUrl = createThemedBookImage(book.title || 'Book', book.author || '', book.genre || 'Book');
+        
+        // If book has an uploaded image, use it
+        if (book.image && book.image.startsWith('/uploads')) {
+          imageUrl = book.image;
+        }
+        
+        // Fallback image for error handling
+        const fallbackImage = createThemedBookImage(book.title || 'Book', book.author || '', book.genre || 'Book');
         
         // Truncate long text
         const displayTitle = truncateText(book.title || 'Untitled', 25);
