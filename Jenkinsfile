@@ -91,7 +91,7 @@ pipeline {
                             # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
                             kubectl set image deployment/donate-books-app \\
-                                donatebooks-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
+                                donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
 
  
                             echo "⏳ Waiting for deployments to complete..."
