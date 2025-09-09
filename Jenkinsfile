@@ -20,7 +20,8 @@ pipeline {
                 script {
                     echo "🛠️ Building Docker image..."
                     docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                    docker.build("${DOCKER_IMAGE}:latest")
+                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+
                 }
             }
         }
@@ -89,7 +90,7 @@ pipeline {
  
                             # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
-                            kubectl set image deployment/donatebooks-app \\
+                            kubectl set image deployment/donate-books-app \\
                                 donatebooks-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
 
  
@@ -109,7 +110,7 @@ pipeline {
  
         stage('Get LoadBalancer URL') {
             steps {
-                withAWS(credentials: 'aaws_credentials', region: "${AWS_REGION}") {
+                withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
                     script {
                         sh """
                             echo "🌐 Getting LoadBalancer URL..."
