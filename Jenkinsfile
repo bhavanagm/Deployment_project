@@ -1,10 +1,10 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "bhavanagm15/donatebooks-app"
-        DOCKER_TAG   = "${BUILD_NUMBER}"
+        DOCKER_IMAGE     = "bhavanagm15/donatebooks-app"
+        DOCKER_TAG       = "${BUILD_NUMBER}"
         EKS_CLUSTER_NAME = "bhavana-test-cluster"
-        AWS_REGION = "us-east-1"
+        AWS_REGION       = "us-east-1"
     }
     stages {
         stage('Checkout') {
@@ -21,7 +21,6 @@ pipeline {
                     echo "🛠️ Building Docker image..."
                     docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                     sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-
                 }
             }
         }
@@ -91,8 +90,7 @@ pipeline {
                             # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
                             kubectl set image deployment/donate-books-app \\
-                                donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
-
+                                donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG}
  
                             echo "⏳ Waiting for deployments to complete..."
                             kubectl rollout status deployment/mongodb --timeout=300s
