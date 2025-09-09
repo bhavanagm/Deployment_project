@@ -54,7 +54,7 @@ pipeline {
                         done
  
                         # Show logs for debugging
-                        docker-compose logs --tail=10 donate-books-service
+                        docker-compose logs --tail=10 app
                     """
                 }
             }
