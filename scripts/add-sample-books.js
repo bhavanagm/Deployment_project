@@ -1,225 +1,200 @@
-// Add sample books to the database
+// Script to add sample books to the database for testing
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Book = require('../models/book');
 const User = require('../models/user');
 
+// Sample books data
+const sampleBooks = [
+  {
+    title: "Atomic Habits",
+    author: "James Clear", 
+    genre: "Self-help",
+    condition: "New",
+    type: "donate",
+    location: "Mumbai, India",
+    contact: "sample@bookswap.com",
+    description: "An Easy & Proven Way to Build Good Habits & Break Bad Ones",
+    isbn: "9780735211292",
+    publishYear: 2018,
+    language: "English",
+    pages: 320
+  },
+  {
+    title: "The Alchemist",
+    author: "Paulo Coelho",
+    genre: "Fiction", 
+    condition: "Good",
+    type: "swap",
+    location: "Delhi, India",
+    contact: "reader@bookswap.com",
+    description: "A timeless tale about following your dreams",
+    isbn: "9780061120084",
+    publishYear: 1988,
+    language: "English", 
+    pages: 163
+  },
+  {
+    title: "Rich Dad Poor Dad",
+    author: "Robert Kiyosaki",
+    genre: "Business",
+    condition: "Good",
+    type: "donate",
+    location: "Bangalore, India",
+    contact: "finance@bookswap.com",
+    description: "What the Rich Teach Their Kids About Money That the Poor and Middle Class Do Not!",
+    isbn: "9781612680194",
+    publishYear: 1997,
+    language: "English",
+    pages: 336
+  },
+  {
+    title: "Sapiens",
+    author: "Yuval Noah Harari",
+    genre: "History",
+    condition: "New",
+    type: "swap",
+    location: "Chennai, India", 
+    contact: "history@bookswap.com",
+    description: "A Brief History of Humankind",
+    isbn: "9780062316097",
+    publishYear: 2014,
+    language: "English",
+    pages: 464
+  },
+  {
+    title: "The Power of Now",
+    author: "Eckhart Tolle",
+    genre: "Self-help",
+    condition: "Fair",
+    type: "donate",
+    location: "Pune, India",
+    contact: "spiritual@bookswap.com", 
+    description: "A Guide to Spiritual Enlightenment",
+    isbn: "9781577314806",
+    publishYear: 1997,
+    language: "English",
+    pages: 236
+  },
+  {
+    title: "Think and Grow Rich",
+    author: "Napoleon Hill",
+    genre: "Business",
+    condition: "Good",
+    type: "swap",
+    location: "Hyderabad, India",
+    contact: "success@bookswap.com",
+    description: "The Landmark Bestseller Now Revised and Updated for the 21st Century",
+    isbn: "9781585424337",
+    publishYear: 1937,
+    language: "English",
+    pages: 238
+  },
+  {
+    title: "1984",
+    author: "George Orwell",
+    genre: "Fiction",
+    condition: "Good", 
+    type: "donate",
+    location: "Kolkata, India",
+    contact: "classics@bookswap.com",
+    description: "A dystopian social science fiction novel and cautionary tale",
+    isbn: "9780451524935",
+    publishYear: 1949,
+    language: "English",
+    pages: 328
+  },
+  {
+    title: "You Can Win",
+    author: "Shiv Khera",
+    genre: "Self-help",
+    condition: "New",
+    type: "swap",
+    location: "Jaipur, India",
+    contact: "motivation@bookswap.com",
+    description: "A Step by Step Tool for Top Achievers",
+    isbn: "9788172234997",
+    publishYear: 1998,
+    language: "English",
+    pages: 256
+  }
+];
+
 async function addSampleBooks() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/bookswapDB', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    
+    // Connect to MongoDB
+    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/donatebooks';
+    await mongoose.connect(mongoURI);
     console.log('✅ Connected to MongoDB');
+
+    // Check if books already exist
+    const existingBooksCount = await Book.countDocuments();
+    console.log(`📚 Current books in database: ${existingBooksCount}`);
+
+    if (existingBooksCount > 0) {
+      console.log('⚠️ Books already exist in database. Skipping sample data insertion.');
+      console.log('💡 To reset and add sample books, delete existing books first.');
+      return;
+    }
+
+    // Find or create a sample user to associate with books
+    let sampleUser = await User.findOne({ email: 'sample@bookswap.com' });
     
-    // Check if we have any users, if not create a sample user
-    let sampleUser = await User.findOne({ username: 'sampleuser' });
     if (!sampleUser) {
       sampleUser = new User({
         username: 'sampleuser',
-        email: 'sample@bookswap.com',
-        location: 'New York',
-        password: 'sample123'
+        email: 'sample@bookswap.com', 
+        password: 'password123',
+        location: 'Mumbai, India',
+        firstName: 'Sample',
+        lastName: 'User',
+        bio: 'A sample user for testing the BookSwap platform'
       });
       await sampleUser.save();
       console.log('✅ Created sample user');
     }
+
+    // Add sample books
+    console.log('📖 Adding sample books...');
     
-    // Clear existing books if any
-    await Book.deleteMany({});
-    console.log('🧹 Cleared existing books');
-    
-    // Sample books data
-    const sampleBooks = [
-      {
-        title: "The Great Gatsby",
-        author: "F. Scott Fitzgerald",
-        genre: "Fiction",
-        condition: "Good",
-        type: "Donate",
-        location: "New York, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A classic American novel about the Jazz Age and the American Dream.",
-        averageRating: 4.2,
-        totalRatings: 15,
-        publishYear: 1925
-      },
-      {
-        title: "To Kill a Mockingbird",
-        author: "Harper Lee",
-        genre: "Fiction",
-        condition: "New",
-        type: "Swap",
-        location: "Brooklyn, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A gripping tale of racial injustice and childhood innocence.",
-        averageRating: 4.5,
-        totalRatings: 23,
-        publishYear: 1960
-      },
-      {
-        title: "1984",
-        author: "George Orwell",
-        genre: "Fiction",
-        condition: "Used",
-        type: "Donate",
-        location: "Manhattan, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A dystopian social science fiction novel and cautionary tale.",
-        averageRating: 4.7,
-        totalRatings: 31,
-        publishYear: 1949
-      },
-      {
-        title: "Pride and Prejudice",
-        author: "Jane Austen",
-        genre: "Romance",
-        condition: "Good",
-        type: "Swap",
-        location: "Queens, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A romantic novel of manners written by Jane Austen.",
-        averageRating: 4.3,
-        totalRatings: 18,
-        publishYear: 1813
-      },
-      {
-        title: "The Catcher in the Rye",
-        author: "J.D. Salinger",
-        genre: "Fiction",
-        condition: "Fair",
-        type: "Donate",
-        location: "Bronx, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A controversial novel originally published for adults.",
-        averageRating: 3.8,
-        totalRatings: 12,
-        publishYear: 1951
-      },
-      {
-        title: "A Brief History of Time",
-        author: "Stephen Hawking",
-        genre: "Science",
-        condition: "New",
-        type: "Swap",
-        location: "Staten Island, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A popular science book on cosmology by Stephen Hawking.",
-        averageRating: 4.1,
-        totalRatings: 9,
-        publishYear: 1988
-      },
-      {
-        title: "The Alchemist",
-        author: "Paulo Coelho",
-        genre: "Self-help",
-        condition: "Good",
-        type: "Donate",
-        location: "Long Island, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A philosophical book about following your dreams.",
-        averageRating: 4.0,
-        totalRatings: 27,
-        publishYear: 1988
-      },
-      {
-        title: "Sapiens",
-        author: "Yuval Noah Harari",
-        genre: "History",
-        condition: "New",
-        type: "Swap",
-        location: "Buffalo, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A brief history of humankind exploring human evolution.",
-        averageRating: 4.4,
-        totalRatings: 21,
-        publishYear: 2011
-      },
-      {
-        title: "The Da Vinci Code",
-        author: "Dan Brown",
-        genre: "Mystery",
-        condition: "Used",
-        type: "Donate",
-        location: "Albany, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A mystery thriller novel exploring art, history, and religion.",
-        averageRating: 3.9,
-        totalRatings: 16,
-        publishYear: 2003
-      },
-      {
-        title: "Harry Potter and the Sorcerer's Stone",
-        author: "J.K. Rowling",
-        genre: "Fantasy",
-        condition: "Good",
-        type: "Swap",
-        location: "Rochester, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "The first book in the Harry Potter series.",
-        averageRating: 4.6,
-        totalRatings: 42,
-        publishYear: 1997
-      },
-      {
-        title: "Atomic Habits",
-        author: "James Clear",
-        genre: "Self-help",
-        condition: "New",
-        type: "Donate",
-        location: "Syracuse, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "A practical guide to building good habits and breaking bad ones.",
-        averageRating: 4.5,
-        totalRatings: 19,
-        publishYear: 2018
-      },
-      {
-        title: "The Art of War",
-        author: "Sun Tzu",
-        genre: "Philosophy",
-        condition: "Good",
-        type: "Swap",
-        location: "Ithaca, NY",
-        contact: "sample@bookswap.com",
-        userId: sampleUser._id,
-        description: "An ancient Chinese military treatise and philosophy.",
-        averageRating: 4.2,
-        totalRatings: 14,
-        publishYear: -500 // 5th century BC
-      }
-    ];
-    
-    // Insert sample books
     for (const bookData of sampleBooks) {
-      const book = new Book(bookData);
+      const book = new Book({
+        ...bookData,
+        userId: sampleUser._id,
+        status: 'available',
+        isAvailable: true,
+        averageRating: Math.random() * 2 + 3, // Random rating between 3-5
+        totalRatings: Math.floor(Math.random() * 10) + 1,
+        totalViews: Math.floor(Math.random() * 100) + 10
+      });
+      
       await book.save();
-      console.log(`✅ Added book: ${book.title} by ${book.author}`);
+      console.log(`✅ Added: "${book.title}" by ${book.author}`);
     }
-    
-    console.log(`\n🎉 Successfully added ${sampleBooks.length} sample books to the database!`);
-    
-    // Verify the books were added
-    const totalBooks = await Book.countDocuments();
-    console.log(`📚 Total books in database: ${totalBooks}`);
-    
-    process.exit(0);
+
+    // Update user's book counts
+    await User.findByIdAndUpdate(sampleUser._id, {
+      totalBooksShared: sampleBooks.length,
+      totalBooksDonated: sampleBooks.filter(b => b.type === 'donate').length,
+      totalPoints: sampleBooks.length * 10
+    });
+
+    console.log('\n🎉 Sample books added successfully!');
+    console.log(`📊 Total books added: ${sampleBooks.length}`);
+    console.log(`👤 Associated with user: ${sampleUser.username}`);
+    console.log('\n💡 You can now test the gallery and pickup functionality!');
+
   } catch (error) {
     console.error('❌ Error adding sample books:', error);
-    process.exit(1);
+  } finally {
+    await mongoose.connection.close();
+    console.log('🔌 Database connection closed');
   }
 }
 
-// Run the function
-addSampleBooks();
+// Run the script
+if (require.main === module) {
+  addSampleBooks();
+}
+
+module.exports = { addSampleBooks, sampleBooks };

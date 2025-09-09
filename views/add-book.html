@@ -4,21 +4,256 @@
 <head>
   <meta charset="UTF-8" />
   <title>Add Book - BookSwap</title>
-  <link rel="stylesheet" href="/css/add-book.css" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  
+  <style>
+    /* NYC Add Book Page Styles */
+    body {
+      background: linear-gradient(135deg, var(--bg-lavender-50) 0%, var(--bg-lavender-100) 50%, var(--bg-lavender-200) 100%);
+      color: var(--gray-800);
+      margin: 0;
+      padding-top: 100px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-2xl);
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: var(--space-xl);
+      padding: 0;
+      margin: 0;
+      align-items: center;
+    }
+    
+    .nav-links li a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-sm);
+    }
+
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: var(--white);
+      margin: 2px 0;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: #6d56b0;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: var(--space-lg) 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: var(--space-lg) var(--space-2xl);
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: var(--radius-lg);
+      }
+    }
+    
+    .form-container {
+      max-width: 700px;
+      margin: var(--space-2xl) auto;
+      background: var(--white);
+      padding: var(--space-3xl);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-2xl);
+      border: 1px solid var(--gray-200);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .form-container::before {
+      content: '🏙️';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      font-size: 8rem;
+      opacity: 0.05;
+    }
+    
+    .form-container h2 {
+      text-align: center;
+      background: var(--gradient-secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .form-container label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      font-size: 0.875rem;
+    }
+    
+    .form-container input,
+    .form-container select {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-lg);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      font-size: 1rem;
+      transition: all var(--transition-normal);
+      box-sizing: border-box;
+    }
+    
+    .form-container input:focus,
+    .form-container select:focus {
+      outline: none;
+      border-color: var(--lavender-primary);
+      box-shadow: 0 0 0 3px rgba(177, 156, 217, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .form-container button[type="submit"] {
+      width: 100%;
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: var(--space-lg);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-lavender);
+    }
+    
+    .form-container button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(177, 156, 217, 0.45);
+    }
+    
+    .back-btn {
+      background: var(--gradient-accent);
+      color: var(--white);
+      padding: var(--space-md) var(--space-lg);
+      border: none;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: var(--space-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .back-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    #previewImg {
+      margin: var(--space-md) 0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="logo">📚 BookSwap</div>
-    <div class="menu-toggle" id="hamburger">
-      <div></div><div></div><div></div>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
     </div>
-    <nav id="sideMenu">
-      <a href="/index">Home</a>
-      <a href="/add-book">Add Book</a>
-      <a href="/gallery">Gallery</a>
-      <a href="/pickup-request">Pickup</a>
-    </nav>
-  </header>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-links">
+            <li><a href="/index">Home</a></li>
+            <li><a href="/add-book">Add Book</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/pickup-track">Track</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </nav>
 
   <main class="form-container">
     <h2>Add a New Book</h2>
@@ -82,6 +317,42 @@
 
   <footer>&copy; 2025 BookSwap Platform | Built with ❤️</footer>
 
- <script src="/js/add-book.js"></script> 
+ <script src="/js/add-book.js"></script>
+ 
+ <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      if (hamburgerMenu && navLinks) {
+        hamburgerMenu.addEventListener('click', function() {
+          hamburgerMenu.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+        
+        document.addEventListener('click', function(event) {
+          const isClickInsideNav = navLinks.contains(event.target);
+          const isClickOnHamburger = hamburgerMenu.contains(event.target);
+          
+          if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,92 @@
+{
+  "training_data_schema": {
+    "version": "1.0",
+    "description": "Comprehensive training data structure for BookSwap chatbot",
+    "categories": {
+      "intent_classification": {
+        "description": "Data for training intent classification model",
+        "structure": {
+          "query": "string - user input text",
+          "intent": "string - classified intent category",
+          "entities": "object - extracted entities from the query",
+          "confidence": "float - training confidence score",
+          "context": "string - conversation context if applicable"
+        }
+      },
+      "response_generation": {
+        "description": "Data for training response generation",
+        "structure": {
+          "query": "string - user input",
+          "response": "string - appropriate response",
+          "response_type": "string - template/dynamic/fallback",
+          "personalization": "object - personalization parameters"
+        }
+      },
+      "conversation_flow": {
+        "description": "Multi-turn conversation data",
+        "structure": {
+          "conversation_id": "string - unique conversation identifier",
+          "turns": "array - sequence of user/bot exchanges",
+          "topic": "string - main conversation topic",
+          "outcome": "string - conversation result"
+        }
+      }
+    },
+    "intent_categories": [
+      "book_recommendation",
+      "platform_navigation", 
+      "how_to_donate",
+      "how_to_swap",
+      "pickup_request",
+      "technical_support",
+      "book_search",
+      "account_management",
+      "greeting",
+      "thanks",
+      "goodbye",
+      "general_inquiry",
+      "troubleshooting",
+      "feature_explanation"
+    ],
+    "entity_types": [
+      "book_title",
+      "author_name",
+      "genre",
+      "book_condition",
+      "location",
+      "date_time",
+      "user_preference",
+      "platform_feature"
+    ]
+  },
+  "sample_training_data": [
+    {
+      "query": "Can you recommend some good science fiction books?",
+      "intent": "book_recommendation",
+      "entities": {
+        "genre": "science fiction"
+      },
+      "response": "Here are some excellent science fiction books: 1. Dune by Frank Herbert 2. The Hitchhiker's Guide to the Galaxy by Douglas Adams 3. Ender's Game by Orson Scott Card. Check our Gallery to see if any are available!",
+      "confidence": 0.95
+    },
+    {
+      "query": "How do I donate my old textbooks?",
+      "intent": "how_to_donate",
+      "entities": {
+        "book_type": "textbooks"
+      },
+      "response": "To donate textbooks: 1. Go to 'Add Book' page 2. Fill in textbook details 3. Select 'Donate' as type 4. Upload photos 5. Submit! Your textbooks will help students save money.",
+      "confidence": 0.98
+    },
+    {
+      "query": "I'm having trouble uploading a book photo",
+      "intent": "technical_support",
+      "entities": {
+        "issue": "photo upload",
+        "feature": "add book"
+      },
+      "response": "Photo upload issues: 1. File should be under 5MB 2. Use JPG/PNG format 3. Check internet connection 4. Try refreshing the page. Photos are optional but helpful!",
+      "confidence": 0.92
+    }
+  ]
+}

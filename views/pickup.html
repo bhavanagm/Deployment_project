@@ -4,460 +4,141 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pickup Request - BookSwap</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Pickup Form CSS -->
+  <link rel="stylesheet" href="/css/pickup-form.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-
+    /* NYC Navbar */
     .navbar {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 15px 30px;
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hamburger {
-      font-size: 28px;
-      cursor: pointer;
-      transition: transform 0.3s;
-      z-index: 1001;
-    }
-
-    .hamburger:hover {
-      transform: scale(1.1);
-    }
-
-    .side-menu {
-      position: fixed;
+      box-shadow: var(--shadow-2xl);
+      position: sticky;
       top: 0;
-      right: 0;
-      width: 0;
-      height: 100%;
-      overflow: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 60px 20px;
-      gap: 20px;
-      transition: width 0.3s ease;
       z-index: 1000;
-      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
     }
 
-    .side-menu a {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      font-size: 18px;
-      text-decoration: none;
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .side-menu a:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    .side-menu.show {
-      width: 280px;
-    }
-
-    .side-menu.show a {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .back-btn {
-      position: fixed;
-      top: 100px;
-      left: 30px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      font-size: 16px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-      transition: all 0.3s;
-      z-index: 100;
-    }
-
-    .back-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
-    }
-
-    .pickup-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: calc(100vh - 200px);
-      padding: 40px 20px;
-    }
-
-    .pickup-form-section {
-      width: 100%;
-      max-width: 800px;
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-      margin: 0 auto;
-      position: relative;
-    }
-
-    h2 {
-      text-align: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 30px;
+    .navbar-brand {
       font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-    }
-
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
-    }
-
-    .confirmation {
-      text-align: center;
-      background-color: #e8f5e9;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 30px;
-    }
-
-    .error {
-      color: red;
-      font-size: 13px;
-      margin-top: 5px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* Remove pickup image section for centered form */
-
-    footer {
-      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-      color: white;
-      text-align: center;
-      padding: 30px;
-      margin-top: 50px;
-    }
-
-    /* Enhanced Pickup Form Styles */
-    .book-selection {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      border: 2px solid #e9ecef;
-    }
-
-    .book-selection h3 {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 15px;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .book-search {
+      font-weight: 800;
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-secondary);
     }
 
-    #bookSearch {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: var(--space-xl);
+      padding: 0;
+      margin: 0;
+      align-items: center;
     }
 
-    .search-btn {
-      padding: 10px 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s;
+    .nav-links li a {
+      color: var(--white);
+      text-decoration: none;
       font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
     }
-
-    .search-btn:hover {
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
       transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
-    .book-suggestions {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      margin: 15px 0;
-    }
-
-    .book-suggestion {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .book-suggestion:hover {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
-
-    .selected-books {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .selected-book {
-      background: #4caf50;
-      color: white;
-      padding: 8px 15px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-    }
-
-    .remove-book {
-      cursor: pointer;
-      font-weight: bold;
-      margin-left: 5px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .form-group select {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      background: white;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .checkbox-label input[type="checkbox"] {
-      width: auto;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-    }
-
-    .btn-save-draft {
-      padding: 14px 20px;
-      background-color: #ff9800;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      flex: 1;
-    }
-
-    .btn-save-draft:hover {
-      background-color: #f57c00;
-    }
-
-    .btn-submit {
-      flex: 2;
-    }
-
-    .status-tracker {
-      background: #e3f2fd;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    .status-steps {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-    }
-
-    .status-step {
-      text-align: center;
-      flex: 1;
-    }
-
-    .step-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #ddd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 10px;
-      color: white;
-      font-size: 18px;
-    }
-
-    .step-icon.active {
-      background: #4caf50;
-    }
-
-    .step-icon.completed {
-      background: #2196f3;
-    }
-
-    .modal {
+    /* Hamburger Menu */
+    .hamburger-menu {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 2000;
-    }
-
-    .modal-content {
-      background: white;
-      margin: 10% auto;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .close {
-      float: right;
-      font-size: 28px;
+      flex-direction: column;
+      background: none;
+      border: none;
       cursor: pointer;
-      color: #999;
+      padding: var(--space-sm);
     }
 
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: var(--white);
+      margin: 2px 0;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Mobile styles */
     @media (max-width: 768px) {
-      .pickup-wrapper {
-        padding: 20px 10px;
-        min-height: auto;
+      .hamburger-menu {
+        display: flex;
       }
 
-      .pickup-form-section {
-        padding: 30px 20px;
-        margin: 20px 0;
-      }
-
-      .back-btn {
-        position: static;
-        margin: 20px;
-        align-self: flex-start;
-      }
-
-      h2 {
-        font-size: 1.8rem;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .form-actions {
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: var(--gradient-dark);
         flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
       }
 
-      .book-suggestions {
-        grid-template-columns: 1fr;
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: var(--space-lg) 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: var(--space-lg) var(--space-2xl);
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+        background: var(--glass-white);
+      }
+
+      .nav-links li a:hover {
+        background: var(--glass-light);
+        transform: translateX(5px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
       }
     }
   </style>
@@ -465,29 +146,35 @@
 <body>
 
   <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">📚 BookSwap</div>
-    <div class="hamburger" id="hamburger">☰</div>
-  </header>
-
-  <!-- Back Button -->
-  <button class="back-btn" onclick="history.back()">🔙 Back</button>
-
-  <!-- Side Menu -->
-  <div id="sideMenu" class="side-menu">
-    <a href="/profile">👤 My Profile</a>
-    <a href="/add-book">➕ Add New Book</a>
-    <a href="/gallery">📚 Browse Gallery</a>
-    <a href="/pickup-request">🚚 Pickup Request</a>
-    <a href="/dashboard">📊 Dashboard</a>
-    <a href="/chatbot">🤖 Chat with Elina</a>
-  </div>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
+    </div>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/add-book">Add Book</a></li>
+      <li><a href="/gallery">Gallery</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/Pickup">Pickup</a></li>
+      <li><a href="/pickup-track">Track</a></li>
+    </ul>
+    
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </nav>
 
   <!-- Main Section with Form & Image -->
   <div class="pickup-wrapper">
     <!-- Pickup Form -->
-    <section class="pickup-form-section">
-      <h2>📦 Enhanced Pickup Request Form</h2>
+    <section class="pickup-form-section card animate-slide-up">
+      <h2 class="pickup-page-title">📦 Enhanced Pickup Request Form</h2>
       
       <!-- Book Selection Section -->
       <div class="book-selection">
@@ -583,16 +270,27 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-submit">📦 Submit Pickup Request</button>
-          <button type="button" class="btn-save-draft" onclick="saveDraft()">💾 Save as Draft</button>
+          <button type="submit" class="btn btn-primary btn-submit btn-lg">📦 Submit Pickup Request</button>
+          <button type="button" class="btn btn-warning btn-save-draft btn-lg" onclick="saveDraft()">💾 Save as Draft</button>
         </div>
       </form>
 
       <!-- Confirmation Message -->
       <div id="confirmationMsg" class="confirmation hidden">
         <h3>✅ Pickup Request Submitted!</h3>
-        <p>Thank you <span id="confirmName"></span>. We’ve received your request to pick up <strong><span id="confirmBook"></span></strong>.</p>
-        <p>Confirmation sent to <span id="confirmEmail"></span>.</p>
+        <p>Thank you <span id="confirmName"></span>. We've received your request to pick up <strong><span id="confirmBook"></span></strong>.</p>
+        <div class="tracking-info">
+          <div class="tracking-id-display">
+            <h4>📋 Your Tracking ID:</h4>
+            <div class="tracking-id" id="trackingIdDisplay">PU123456789ABC</div>
+            <div class="tracking-actions">
+              <button type="button" class="btn btn-primary" onclick="copyTrackingId()">📋 Copy ID</button>
+              <button type="button" class="btn btn-secondary" onclick="trackPickup()">🔍 Track Pickup</button>
+            </div>
+          </div>
+        </div>
+        <p>📧 Confirmation sent to <span id="confirmEmail"></span>.</p>
+        <p class="important-note">⚠️ <strong>Important:</strong> Save your tracking ID to check pickup status anytime!</p>
       </div>
     </section>
 
@@ -605,122 +303,111 @@
     <p>&copy; 2025 BookSwap Platform | Built with ❤️ by Bhavana G M</p>
   </footer>
 
-  <!-- Script -->
+  <!-- Enhanced Pickup Validation Script -->
+  <script src="/js/pickup-validation.js"></script>
+  
+  <!-- Core Functionality Script -->
   <script>
-    // Check if user is logged in via session
+    // Authentication Check
     fetch('/api/current-user')
       .then(response => {
         if (!response.ok) {
-          // User not logged in, redirect to login page
           window.location.href = '/login';
         }
       })
       .catch(() => {
-        // Error checking auth, redirect to login
         window.location.href = '/login';
       });
 
-    // Hamburger toggle
-    const hamburger = document.getElementById("hamburger");
-    const sideMenu = document.getElementById("sideMenu");
+    // Navigation Menu Toggle - Index Page Style
+    const hamburgerMenu = document.getElementById('hamburger-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (hamburgerMenu && navLinks) {
+      hamburgerMenu.addEventListener('click', function() {
+        // Toggle active class on hamburger button
+        hamburgerMenu.classList.toggle('active');
+        
+        // Toggle active class on navigation menu
+        navLinks.classList.toggle('active');
+      });
+      
+      // Close menu when clicking on a link (mobile)
+      const menuLinks = navLinks.querySelectorAll('a');
+      menuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          hamburgerMenu.classList.remove('active');
+          navLinks.classList.remove('active');
+        });
+      });
+      
+      // Close menu when clicking outside (mobile)
+      document.addEventListener('click', function(event) {
+        const isClickInsideNav = navLinks.contains(event.target);
+        const isClickOnHamburger = hamburgerMenu.contains(event.target);
+        
+        if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+          hamburgerMenu.classList.remove('active');
+          navLinks.classList.remove('active');
+        }
+      });
+    }
 
-    hamburger.addEventListener("click", () => {
-      sideMenu.classList.toggle("show");
-    });
-
-    window.addEventListener("click", (e) => {
-      if (!sideMenu.contains(e.target) && !hamburger.contains(e.target)) {
-        sideMenu.classList.remove("show");
-      }
-    });
-
-    // Form Validation & Confirmation
-    const form = document.getElementById('pickupForm');
-    const confirmMsg = document.getElementById('confirmationMsg');
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const bookTitle = document.getElementById('bookTitle').value.trim();
-      const userName = document.getElementById('userName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const mobile = document.getElementById('mobile').value.trim();
-      const pickupAddress = document.getElementById('pickupAddress').value.trim();
-
-      const errors = {
-        bookTitle: document.getElementById('bookTitleError'),
-        userName: document.getElementById('userNameError'),
-        email: document.getElementById('emailError'),
-        mobile: document.getElementById('mobileError'),
-        address: document.getElementById('addressError'),
-      };
-
-      for (let key in errors) errors[key].textContent = '';
-
-      let isValid = true;
-
-      if (bookTitle === '') {
-        errors.bookTitle.textContent = 'Book title is required.';
-        isValid = false;
-      }
-
-      if (userName === '' || !/^[A-Za-z ]+$/.test(userName)) {
-        errors.userName.textContent = 'Enter a valid name (letters only).';
-        isValid = false;
-      }
-
-      if (email === '' || !/^\S+@\S+\.\S+$/.test(email)) {
-        errors.email.textContent = 'Enter a valid email address.';
-        isValid = false;
-      }
-
-      if (!/^\d{10}$/.test(mobile)) {
-        errors.mobile.textContent = 'Enter a valid 10-digit mobile number.';
-        isValid = false;
-      }
-
-      if (pickupAddress === '') {
-        errors.address.textContent = 'Pickup address is required.';
-        isValid = false;
-      }
-
-      if (isValid) {
-        document.getElementById('confirmBook').textContent = bookTitle;
-        document.getElementById('confirmName').textContent = userName;
-        document.getElementById('confirmEmail').textContent = email;
-
-        form.classList.add('hidden');
-        confirmMsg.classList.remove('hidden');
-      }
-    });
-
-    // Enhanced Pickup Form Features
-    const availableBooks = [
-      { title: "Atomic Habits", author: "James Clear", genre: "Self-Help" },
-      { title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction" },
-      { title: "Rich Dad Poor Dad", author: "Robert Kiyosaki", genre: "Finance" },
-      { title: "You Can Win", author: "Shiv Khera", genre: "Motivation" },
-      { title: "The Power of Now", author: "Eckhart Tolle", genre: "Spirituality" },
-      { title: "Think and Grow Rich", author: "Napoleon Hill", genre: "Business" },
-      { title: "Sapiens", author: "Yuval Noah Harari", genre: "History" },
-      { title: "1984", author: "George Orwell", genre: "Fiction" }
-    ];
-
+    // Enhanced Book Selection Features
+    let availableBooks = [];
     let selectedBooks = [];
-
-    // Book search functionality
-    document.getElementById('searchBtn').addEventListener('click', searchBooks);
-    document.getElementById('bookSearch').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        searchBooks();
+    
+    // Load books from database
+    async function loadAvailableBooks() {
+      try {
+        const response = await fetch('/api/books?showAll=true');
+        const data = await response.json();
+        
+        if (data.success && Array.isArray(data.books)) {
+          availableBooks = data.books.map(book => ({
+            id: book._id,
+            title: book.title || 'Unknown Title',
+            author: book.author || 'Unknown Author',
+            genre: book.genre || 'Unknown Genre',
+            owner: book.userId?.username || 'Unknown',
+            type: book.type || 'book'
+          }));
+          console.log(`✅ Loaded ${availableBooks.length} books`);
+        } else {
+          // Fallback books
+          availableBooks = [
+            { title: "Atomic Habits", author: "James Clear", genre: "Self-Help" },
+            { title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction" },
+            { title: "Rich Dad Poor Dad", author: "Robert Kiyosaki", genre: "Finance" }
+          ];
+        }
+      } catch (error) {
+        console.error('Error loading books:', error);
+        availableBooks = [
+          { title: "Atomic Habits", author: "James Clear", genre: "Self-Help" },
+          { title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction" }
+        ];
       }
-    });
+    }
+
+    // Book Search & Selection Functions
+    function initializeBookSearch() {
+      const searchBtn = document.getElementById('searchBtn');
+      const bookSearch = document.getElementById('bookSearch');
+      
+      if (searchBtn) searchBtn.addEventListener('click', searchBooks);
+      if (bookSearch) {
+        bookSearch.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') searchBooks();
+        });
+      }
+    }
 
     function searchBooks() {
       const query = document.getElementById('bookSearch').value.toLowerCase().trim();
       const suggestions = document.getElementById('bookSuggestions');
       
-      if (query === '') {
+      if (!query) {
         suggestions.innerHTML = '';
         return;
       }
@@ -731,36 +418,35 @@
         book.genre.toLowerCase().includes(query)
       );
 
-      if (filteredBooks.length === 0) {
-        suggestions.innerHTML = `
-          <div style="padding: 20px; text-align: center; color: #666;">
-            📚 No books found matching "${query}". Try different keywords.
+      suggestions.innerHTML = filteredBooks.length ? 
+        filteredBooks.map(book => `
+          <div class="book-suggestion animate-fade-in" onclick="selectBook('${book.title}', '${book.author}', '${book.id || ''}')">
+            <strong>${book.title}</strong><br>
+            <small>by ${book.author} • ${book.genre}</small>
           </div>
-        `;
-        return;
-      }
-
-      suggestions.innerHTML = filteredBooks.map(book => `
-        <div class="book-suggestion" onclick="selectBook('${book.title}', '${book.author}')">
-          <strong>${book.title}</strong><br>
-          <small>by ${book.author} • ${book.genre}</small>
-        </div>
-      `).join('');
+        `).join('') :
+        `<div style="padding: var(--space-lg); text-align: center; color: var(--gray-500);">
+          📚 No books found matching "${query}"</div>`;
     }
 
-    function selectBook(title, author) {
+    function selectBook(title, author, bookId = '') {
       const bookInfo = `${title} by ${author}`;
       
-      if (selectedBooks.includes(bookInfo)) {
-        alert('📚 Book already selected!');
+      if (selectedBooks.find(book => book.info === bookInfo)) {
+        showAlert('warning', 'Book already selected!');
         return;
       }
 
-      selectedBooks.push(bookInfo);
+      selectedBooks.push({ info: bookInfo, id: bookId, title, author });
       updateSelectedBooks();
       updateBookTitleField();
       
-      // Clear search
+      if (bookId) {
+        const url = new URL(window.location);
+        url.searchParams.set('bookId', bookId);
+        window.history.replaceState({}, '', url);
+      }
+      
       document.getElementById('bookSearch').value = '';
       document.getElementById('bookSuggestions').innerHTML = '';
     }
@@ -768,43 +454,81 @@
     function updateSelectedBooks() {
       const container = document.getElementById('selectedBooks');
       container.innerHTML = selectedBooks.map(book => `
-        <div class="selected-book">
-          📖 ${book}
-          <span class="remove-book" onclick="removeBook('${book}')">&times;</span>
+        <div class="selected-book animate-slide-in-right">
+          📖 ${book.info}
+          <span class="remove-book" onclick="removeBook('${book.info}')">×</span>
         </div>
       `).join('');
     }
 
     function removeBook(bookInfo) {
-      selectedBooks = selectedBooks.filter(book => book !== bookInfo);
+      selectedBooks = selectedBooks.filter(book => book.info !== bookInfo);
       updateSelectedBooks();
       updateBookTitleField();
     }
 
     function updateBookTitleField() {
-      document.getElementById('bookTitle').value = selectedBooks.join('\n');
+      document.getElementById('bookTitle').value = selectedBooks.map(book => book.info).join('\n');
     }
 
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('pickupDate').min = today;
+    function showAlert(type, message) {
+      if (window.pickupValidator) {
+        window.pickupValidator.showAlert(type, message);
+      } else {
+        alert(message);
+      }
+    }
 
-    // Auto-fill user data if available
-    window.addEventListener('load', function() {
-      // You can integrate with your user session data here
-      const userData = {
-        name: 'Bhavana G M',
-        email: 'bhavana@example.com',
-        mobile: '+91 98765 43210'
-      };
+    // Initialize all functionality
+    async function initializePage() {
+      // Load books and set up search
+      await loadAvailableBooks();
+      initializeBookSearch();
       
-      // Auto-fill if user data is available
-      if (userData.name) document.getElementById('userName').value = userData.name;
-      if (userData.email) document.getElementById('email').value = userData.email;
-      if (userData.mobile) document.getElementById('mobile').value = userData.mobile;
-    });
+      // Set date constraints
+      const dateField = document.getElementById('pickupDate');
+      if (dateField) {
+        const today = new Date().toISOString().split('T')[0];
+        dateField.min = today;
+        
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 30);
+        dateField.max = maxDate.toISOString().split('T')[0];
+      }
+      
+      // Pre-select book from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookId = urlParams.get('bookId');
+      const bookTitle = urlParams.get('title');
+      
+      if (bookId && availableBooks.length) {
+        const book = availableBooks.find(b => b.id === bookId);
+        if (book) {
+          selectBook(book.title, book.author, book.id);
+        }
+      } else if (bookTitle) {
+        document.getElementById('bookTitle').value = decodeURIComponent(bookTitle);
+      }
+      
+      // Auto-fill user data
+      try {
+        const userResponse = await fetch('/api/current-user');
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.success && userData.user) {
+            if (userData.user.username) document.getElementById('userName').value = userData.user.username;
+            if (userData.user.email) document.getElementById('email').value = userData.user.email;
+          }
+        }
+      } catch (error) {
+        console.log('Could not load user data:', error);
+      }
+    }
+    
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', initializePage);
 
-    // Save draft functionality
+    // Save & Load Draft Functions
     function saveDraft() {
       const formData = {
         pickupType: document.getElementById('pickupType').value,
@@ -816,219 +540,159 @@
         pickupDate: document.getElementById('pickupDate').value,
         pickupTime: document.getElementById('pickupTime').value,
         specialInstructions: document.getElementById('specialInstructions').value,
-        selectedBooks: selectedBooks
+        selectedBooks: selectedBooks,
+        timestamp: new Date().toISOString()
       };
 
       localStorage.setItem('pickupFormDraft', JSON.stringify(formData));
-      alert('💾 Draft saved successfully! You can continue later.');
+      showAlert('success', '💾 Draft saved successfully!');
     }
 
-    // Load draft functionality
     function loadDraft() {
       const draft = localStorage.getItem('pickupFormDraft');
-      if (draft) {
+      if (!draft) return false;
+      
+      try {
         const formData = JSON.parse(draft);
         
-        document.getElementById('pickupType').value = formData.pickupType || '';
-        document.getElementById('bookTitle').value = formData.bookTitle || '';
-        document.getElementById('userName').value = formData.userName || '';
-        document.getElementById('email').value = formData.email || '';
-        document.getElementById('mobile').value = formData.mobile || '';
-        document.getElementById('pickupAddress').value = formData.pickupAddress || '';
-        document.getElementById('pickupDate').value = formData.pickupDate || '';
-        document.getElementById('pickupTime').value = formData.pickupTime || '';
-        document.getElementById('specialInstructions').value = formData.specialInstructions || '';
+        Object.keys(formData).forEach(key => {
+          const element = document.getElementById(key);
+          if (element && formData[key]) {
+            element.value = formData[key];
+          }
+        });
         
         if (formData.selectedBooks) {
           selectedBooks = formData.selectedBooks;
           updateSelectedBooks();
         }
         
-        alert('📋 Draft loaded successfully!');
+        showAlert('info', '📋 Draft loaded successfully!');
+        return true;
+      } catch (error) {
+        console.error('Error loading draft:', error);
+        return false;
       }
     }
 
-    // Check for saved draft on page load
-    window.addEventListener('load', function() {
-      const hasDraft = localStorage.getItem('pickupFormDraft');
-      if (hasDraft) {
-        if (confirm('📋 You have a saved draft. Would you like to load it?')) {
-          loadDraft();
+    // Terms and conditions
+    function showTerms() {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.style.display = 'block';
+      modal.innerHTML = `
+        <div class="modal-content animate-slide-up">
+          <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+          <h3 style="color: var(--primary-purple); margin-bottom: var(--space-lg);">Terms and Conditions</h3>
+          <div style="max-height: 60vh; overflow-y: auto; color: var(--gray-600); line-height: 1.8;">
+            <h4>Pickup Service Terms:</h4>
+            <ul style="margin: var(--space-md) 0; padding-left: var(--space-lg);">
+              <li>Pickup requests are subject to book availability</li>
+              <li>Please be available at the specified time slot</li>
+              <li>Books should be in good, readable condition</li>
+              <li>Cancellation requires 24 hours advance notice</li>
+              <li>Contact support for any pickup-related issues</li>
+              <li>Service may be suspended during extreme weather</li>
+            </ul>
+            <h4>User Responsibilities:</h4>
+            <ul style="margin: var(--space-md) 0; padding-left: var(--space-lg);">
+              <li>Provide accurate pickup address and contact details</li>
+              <li>Ensure someone is available for book collection</li>
+              <li>Handle books with care during the pickup process</li>
+            </ul>
+          </div>
+          <div style="text-align: center; margin-top: var(--space-lg);">
+            <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()">I Understand</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // Check for saved draft on page load and offer to load it
+    function checkForDraft() {
+      const draft = localStorage.getItem('pickupFormDraft');
+      if (draft) {
+        try {
+          const formData = JSON.parse(draft);
+          const draftAge = new Date() - new Date(formData.timestamp);
+          const daysOld = Math.floor(draftAge / (1000 * 60 * 60 * 24));
+          
+          if (daysOld < 7) { // Only offer drafts less than a week old
+            if (confirm(`📋 You have a saved draft from ${daysOld === 0 ? 'today' : daysOld + ' days ago'}. Load it?`)) {
+              loadDraft();
+            }
+          } else {
+            // Clean up old drafts
+            localStorage.removeItem('pickupFormDraft');
+          }
+        } catch (error) {
+          localStorage.removeItem('pickupFormDraft');
         }
       }
+    }
+
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check for and offer to load saved drafts
+      setTimeout(checkForDraft, 1000);
     });
 
-    // Terms and conditions modal
-    function showTerms() {
-      alert(`📋 Terms and Conditions:\n\n1. Pickup requests are subject to availability\n2. Please be available at the specified time\n3. Books should be in good condition\n4. Cancellation policy: 24 hours notice required\n5. Contact support for any issues\n\n✅ By agreeing, you accept all terms.`);
-    }
-
-    // Enhanced form validation
-    function validateForm() {
-      const pickupType = document.getElementById('pickupType').value;
-      const pickupDate = document.getElementById('pickupDate').value;
-      const pickupTime = document.getElementById('pickupTime').value;
-      const terms = document.getElementById('terms').checked;
-      
-      let isValid = true;
-      const errors = {
-        pickupType: document.getElementById('pickupTypeError'),
-        date: document.getElementById('dateError'),
-        time: document.getElementById('timeError'),
-        terms: document.getElementById('termsError')
-      };
-
-      // Clear previous errors
-      Object.values(errors).forEach(error => error.textContent = '');
-
-      if (!pickupType) {
-        errors.pickupType.textContent = 'Please select a pickup type.';
-        isValid = false;
-      }
-
-      if (!pickupDate) {
-        errors.date.textContent = 'Please select a pickup date.';
-        isValid = false;
-      } else {
-        const selectedDate = new Date(pickupDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        if (selectedDate < today) {
-          errors.date.textContent = 'Pickup date cannot be in the past.';
-          isValid = false;
-        }
-      }
-
-      if (!pickupTime) {
-        errors.time.textContent = 'Please select a pickup time slot.';
-        isValid = false;
-      }
-
-      if (!terms) {
-        errors.terms.textContent = 'You must agree to the terms and conditions.';
-        isValid = false;
-      }
-
-      return isValid;
-    }
-
-    // Update form submission to include new validations
-    document.getElementById('pickupForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      // Run enhanced validation
-      if (!validateForm()) {
+    // Copy Tracking ID function
+    function copyTrackingId() {
+      const trackingId = window.currentTrackingId || document.getElementById('trackingIdDisplay')?.textContent;
+      if (!trackingId) {
+        showAlert('error', 'No tracking ID found to copy');
         return;
       }
-
-      const bookTitle = document.getElementById('bookTitle').value.trim();
-      const userName = document.getElementById('userName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const mobile = document.getElementById('mobile').value.trim();
-      const pickupAddress = document.getElementById('pickupAddress').value.trim();
-      const pickupDate = document.getElementById('pickupDate').value;
-      const pickupTime = document.getElementById('pickupTime').value;
-
-      const errors = {
-        bookTitle: document.getElementById('bookTitleError'),
-        userName: document.getElementById('userNameError'),
-        email: document.getElementById('emailError'),
-        mobile: document.getElementById('mobileError'),
-        address: document.getElementById('addressError')
-      };
-
-      for (let key in errors) errors[key].textContent = '';
-
-      let isValid = true;
-
-      if (bookTitle === '') {
-        errors.bookTitle.textContent = 'Book title is required.';
-        isValid = false;
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        // Use modern clipboard API
+        navigator.clipboard.writeText(trackingId).then(() => {
+          showAlert('success', '📋 Tracking ID copied to clipboard!');
+        }).catch(() => {
+          fallbackCopyText(trackingId);
+        });
+      } else {
+        fallbackCopyText(trackingId);
       }
-
-      if (userName === '' || !/^[A-Za-z ]+$/.test(userName)) {
-        errors.userName.textContent = 'Enter a valid name (letters only).';
-        isValid = false;
+    }
+    
+    // Fallback copy function for older browsers
+    function fallbackCopyText(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        showAlert('success', '📋 Tracking ID copied to clipboard!');
+      } catch (err) {
+        showAlert('error', 'Failed to copy tracking ID. Please copy it manually.');
       }
-
-      if (email === '' || !/^\S+@\S+\.\S+$/.test(email)) {
-        errors.email.textContent = 'Enter a valid email address.';
-        isValid = false;
+      
+      document.body.removeChild(textArea);
+    }
+    
+    // Track Pickup function
+    function trackPickup() {
+      const trackingId = window.currentTrackingId || document.getElementById('trackingIdDisplay')?.textContent;
+      if (!trackingId) {
+        showAlert('error', 'No tracking ID found');
+        return;
       }
-
-      if (!/^[+]?[0-9]{10,15}$/.test(mobile.replace(/\s/g, ''))) {
-        errors.mobile.textContent = 'Enter a valid mobile number (10-15 digits).';
-        isValid = false;
-      }
-
-      if (pickupAddress === '') {
-        errors.address.textContent = 'Pickup address is required.';
-        isValid = false;
-      }
-
-      if (isValid) {
-        // Submit form to server
-        const submitBtn = document.querySelector('.btn-submit');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '📤 Submitting...';
-        
-        fetch('/api/pickup-request', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            userName: userName,
-            bookTitle: bookTitle,
-            email: email,
-            pickupAddress: pickupAddress
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            alert('❌ Error: ' + data.error);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '📦 Submit Pickup Request';
-            return;
-          }
-          
-          // Clear draft when form is successfully submitted
-          localStorage.removeItem('pickupFormDraft');
-          
-          // Update confirmation message
-          document.getElementById('confirmBook').textContent = bookTitle;
-          document.getElementById('confirmName').textContent = userName;
-          document.getElementById('confirmEmail').textContent = email;
-        
-        // Add pickup details to confirmation
-        const confirmMsg = document.getElementById('confirmationMsg');
-        confirmMsg.innerHTML = `
-          <h3>✅ Pickup Request Submitted Successfully!</h3>
-          <p><strong>📦 Request ID:</strong> PU${Date.now()}</p>
-          <p><strong>👤 Name:</strong> ${userName}</p>
-          <p><strong>📧 Email:</strong> ${email}</p>
-          <p><strong>📚 Books:</strong> ${bookTitle}</p>
-          <p><strong>📅 Date:</strong> ${new Date(pickupDate).toLocaleDateString()}</p>
-          <p><strong>🕐 Time:</strong> ${pickupTime}</p>
-          <p><strong>🚚 Status:</strong> <span style="color: #ff9800;">Processing</span></p>
-          <br>
-          <p>📱 You will receive SMS updates on your mobile number.</p>
-          <p>💬 Our team will contact you within 24 hours to confirm the pickup.</p>
-        `;
-
-        // Hide form and show confirmation
-        document.querySelector('.book-selection').style.display = 'none';
-        document.getElementById('pickupForm').style.display = 'none';
-        confirmMsg.classList.remove('hidden');
-        
-        // Scroll to confirmation
-        confirmMsg.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-
-    console.log('✅ Enhanced pickup form loaded successfully!');
+      
+      window.location.href = `/pickup-track?id=${encodeURIComponent(trackingId)}`;
+    }
+    
+    console.log('✅ Enhanced pickup form with theme loaded successfully!');
   </script>
+  
+  <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
 </body>
 </html>

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Your Pickup - BookSwap</title>
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  <style>
+    /* Use theme variables and light lavender styling */
+    body {
+      background: linear-gradient(135deg, var(--bg-lavender-50) 0%, var(--bg-lavender-100) 50%, var(--bg-lavender-200) 100%);
+      color: var(--gray-800);
+      padding-top: 80px;
+      min-height: 100vh;
+    }
+    
+    .tracking-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .tracking-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .search-section {
+      background: var(--white);
+      padding: var(--space-2xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: var(--space-2xl);
+      border: 1px solid var(--gray-200);
+    }
+
+    .search-input {
+      display: flex;
+      gap: var(--space-lg);
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .search-input input {
+      flex: 1;
+      padding: var(--space-md) var(--space-lg);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      font-size: 1rem;
+      font-family: var(--font-mono);
+      letter-spacing: 1px;
+      transition: all var(--transition-normal);
+    }
+
+    .search-input input:focus {
+      outline: none;
+      border-color: var(--gray-600);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    .btn-track {
+      background: var(--gradient-primary);
+      color: var(--white);
+      border: none;
+      padding: var(--space-md) var(--space-xl);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-lavender);
+    }
+
+    .btn-track:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+    }
+
+    .tracking-results {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: none;
+      border: 1px solid var(--gray-200);
+    }
+
+    .pickup-info {
+      padding: var(--space-2xl);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .pickup-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-confirmed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-in-transit {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .status-delivered {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .status-cancelled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .pickup-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+
+    .detail-item {
+      background: var(--gray-100);
+      padding: var(--space-lg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+    }
+
+    .detail-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-bottom: var(--space-sm);
+      font-weight: 500;
+    }
+
+    .detail-value {
+      font-size: 1rem;
+      color: var(--gray-800);
+      font-weight: 500;
+    }
+
+    .timeline-section {
+      padding: 2rem;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #667eea;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    .timeline-item.active::before {
+      background: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+    }
+
+    .timeline-content {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .timeline-item.active .timeline-content {
+      background: #d4edda;
+      border-left-color: #28a745;
+    }
+
+    .timeline-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .timeline-description {
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-timestamp {
+      font-size: 0.875rem;
+      color: #999;
+    }
+
+    .error-message, .loading-message {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    .error-message {
+      color: #dc3545;
+      background: #f8d7da;
+      border-radius: 8px;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loading-message {
+      background: #e8f4fd;
+      border-radius: 8px;
+      border: 1px solid #b8daff;
+    }
+
+    /* NYC Navbar */
+    .navbar {
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-2xl);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-secondary);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: var(--space-xl);
+      padding: 0;
+      margin: 0;
+      align-items: center;
+    }
+
+    .nav-links li a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
+    /* Hamburger Menu */
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-sm);
+    }
+
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: var(--white);
+      margin: 2px 0;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: var(--gradient-dark);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: var(--space-lg) 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: var(--space-lg) var(--space-2xl);
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+        background: var(--glass-white);
+      }
+
+      .nav-links li a:hover {
+        background: var(--glass-light);
+        transform: translateX(5px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+      
+      .search-input {
+        flex-direction: column;
+      }
+
+      .pickup-details {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline {
+        padding-left: 1.5rem;
+      }
+
+      .timeline-item {
+        padding-left: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
+    </div>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/add-book">Add Book</a></li>
+      <li><a href="/gallery">Gallery</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/Pickup">Pickup</a></li>
+      <li><a href="/pickup-track">Track</a></li>
+    </ul>
+    
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="tracking-container">
+    <div class="tracking-header">
+      <h1>📦 Track Your Book Pickup</h1>
+      <p>Enter your tracking ID to see the real-time status of your pickup request</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <h3>🔍 Enter Tracking ID</h3>
+      <div class="search-input">
+        <input 
+          type="text" 
+          id="trackingInput" 
+          placeholder="PU123456789ABCD" 
+          maxlength="20"
+          style="text-transform: uppercase;">
+        <button id="trackBtn" class="btn-track">Track Pickup</button>
+      </div>
+      <p style="color: #666; font-size: 0.875rem; margin: 0;">
+        💡 Your tracking ID was sent to your email and SMS when you submitted the pickup request
+      </p>
+    </div>
+
+    <!-- Tracking Results -->
+    <div id="trackingResults" class="tracking-results">
+      <!-- Results will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="margin-top: 3rem; background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; text-align: center; padding: 2rem;">
+    <p>&copy; 2025 BookSwap Platform | Real-time Pickup Tracking System 📍</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/notifications.js"></script>
+  
+  <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
+  
+  <script>
+    class PickupTracker {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.setupEventListeners();
+        this.checkUrlForTrackingId();
+      }
+
+      setupEventListeners() {
+        // Nav hamburger menu
+        const hamburger = document.getElementById('hamburger-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        if (hamburger && navLinks) {
+          hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+          });
+
+          document.addEventListener('click', (e) => {
+            const isClickInsideNav = navLinks.contains(e.target);
+            const isClickOnHamburger = hamburger.contains(e.target);
+            if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+              hamburger.classList.remove('active');
+              navLinks.classList.remove('active');
+            }
+          });
+        }
+
+        // Track button
+        document.getElementById('trackBtn').addEventListener('click', () => {
+          this.trackPickup();
+        });
+
+        // Enter key in input
+        document.getElementById('trackingInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            this.trackPickup();
+          }
+        });
+
+        // Format tracking ID input
+        document.getElementById('trackingInput').addEventListener('input', (e) => {
+          e.target.value = e.target.value.toUpperCase();
+        });
+      }
+
+      checkUrlForTrackingId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const trackingId = urlParams.get('id');
+        
+        if (trackingId) {
+          document.getElementById('trackingInput').value = trackingId;
+          this.trackPickup();
+        }
+      }
+
+      async trackPickup() {
+        const trackingId = document.getElementById('trackingInput').value.trim();
+        const resultsContainer = document.getElementById('trackingResults');
+
+        if (!trackingId) {
+          alert('🔍 Please enter a tracking ID');
+          return;
+        }
+
+        // Show loading
+        resultsContainer.style.display = 'block';
+        resultsContainer.innerHTML = `
+          <div class="loading-message">
+            <h3>🔄 Searching...</h3>
+            <p>Looking up your pickup request details...</p>
+          </div>
+        `;
+
+        try {
+          const response = await fetch(`/api/pickup/track/${encodeURIComponent(trackingId)}`);
+          const data = await response.json();
+
+          if (!data.success) {
+            this.showError(data.message || 'Pickup request not found');
+            return;
+          }
+
+          this.displayTrackingResults(data.pickup);
+
+        } catch (error) {
+          console.error('❌ Error tracking pickup:', error);
+          this.showError('Failed to track pickup. Please try again.');
+        }
+      }
+
+      displayTrackingResults(pickup) {
+        const resultsContainer = document.getElementById('trackingResults');
+        
+        resultsContainer.innerHTML = `
+          <!-- Pickup Information -->
+          <div class="pickup-info">
+            <div class="pickup-header">
+              <h2>📦 Pickup Request Details</h2>
+              <div class="status-badge status-${pickup.status}">
+                ${this.getStatusIcon(pickup.status)} ${pickup.status.replace('-', ' ')}
+              </div>
+            </div>
+            
+            <div class="pickup-details">
+              <div class="detail-item">
+                <div class="detail-label">Tracking ID</div>
+                <div class="detail-value" style="font-family: monospace; font-size: 1.1rem;">${pickup.trackingId}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Book Title</div>
+                <div class="detail-value">${pickup.bookTitle}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Requester</div>
+                <div class="detail-value">${pickup.requesterName}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Preferred Date</div>
+                <div class="detail-value">${new Date(pickup.preferredDate).toLocaleDateString()}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Preferred Time</div>
+                <div class="detail-value">${pickup.preferredTime}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Estimated Delivery</div>
+                <div class="detail-value">${pickup.estimatedDelivery}</div>
+              </div>
+            </div>
+
+            ${pickup.specialInstructions ? `
+              <div style="margin-top: 1rem;">
+                <div class="detail-label">Special Instructions</div>
+                <div class="detail-value" style="background: #f8f9fa; padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem;">
+                  ${pickup.specialInstructions}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Timeline Section -->
+          <div class="timeline-section">
+            <h3>📍 Pickup Timeline</h3>
+            <div class="timeline">
+              ${this.generateTimeline(pickup.statusHistory, pickup.status)}
+            </div>
+          </div>
+        `;
+      }
+
+      generateTimeline(statusHistory, currentStatus) {
+        const allStatuses = [
+          { status: 'pending', title: 'Request Submitted', description: 'Your pickup request has been received and is being processed' },
+          { status: 'confirmed', title: 'Pickup Confirmed', description: 'Book owner has confirmed the pickup request' },
+          { status: 'in-transit', title: 'Pickup In Progress', description: 'Our team is on the way to collect your book' },
+          { status: 'delivered', title: 'Book Delivered', description: 'Your book has been successfully delivered' }
+        ];
+
+        return allStatuses.map(statusItem => {
+          // Find actual history entry for this status
+          const historyEntry = statusHistory.find(h => h.status === statusItem.status);
+          const isCompleted = historyEntry || 
+            (statusItem.status === 'pending') || 
+            (currentStatus === 'confirmed' && statusItem.status === 'pending') ||
+            (currentStatus === 'in-transit' && ['pending', 'confirmed'].includes(statusItem.status)) ||
+            (currentStatus === 'delivered' && ['pending', 'confirmed', 'in-transit'].includes(statusItem.status));
+
+          return `
+            <div class="timeline-item ${isCompleted ? 'active' : ''}">
+              <div class="timeline-content">
+                <div class="timeline-title">
+                  ${this.getStatusIcon(statusItem.status)} ${statusItem.title}
+                </div>
+                <div class="timeline-description">${statusItem.description}</div>
+                ${historyEntry ? `
+                  <div class="timeline-timestamp">
+                    ${new Date(historyEntry.timestamp).toLocaleString()}
+                    ${historyEntry.notes && historyEntry.notes !== statusItem.description ? `<br><em>${historyEntry.notes}</em>` : ''}
+                  </div>
+                ` : isCompleted ? `
+                  <div class="timeline-timestamp">Completed</div>
+                ` : `
+                  <div class="timeline-timestamp">Pending</div>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      getStatusIcon(status) {
+        const icons = {
+          'pending': '⏳',
+          'confirmed': '✅',
+          'in-transit': '🚚',
+          'delivered': '📦',
+          'cancelled': '❌'
+        };
+        return icons[status] || '📋';
+      }
+
+      showError(message) {
+        const resultsContainer = document.getElementById('trackingResults');
+        resultsContainer.style.display = 'block';
+        resultsContainer.innerHTML = `
+          <div class="error-message">
+            <h3>❌ Tracking Error</h3>
+            <p>${message}</p>
+            <p style="margin-top: 1rem; font-size: 0.875rem;">
+              💡 Make sure you've entered the correct tracking ID. If you're still having issues, 
+              please contact our support team.
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize pickup tracker when DOM loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new PickupTracker();
+      
+      // Initialize notifications if available
+      if (window.NotificationSystem) {
+        window.notificationSystem = new NotificationSystem();
+      }
+    });
+  </script>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      if (hamburgerMenu && navLinks) {
+        hamburgerMenu.addEventListener('click', function() {
+          // Toggle active class on hamburger button
+          hamburgerMenu.classList.toggle('active');
+          
+          // Toggle active class on navigation menu
+          navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link (mobile)
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+        
+        // Close menu when clicking outside (mobile)
+        document.addEventListener('click', function(event) {
+          const isClickInsideNav = navLinks.contains(event.target);
+          const isClickOnHamburger = hamburgerMenu.contains(event.target);
+          
+          if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

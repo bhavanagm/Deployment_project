@@ -6,7 +6,11 @@ class DashboardManager {
     }
 
     async init() {
-        await this.loadCurrentUser();
+        const userLoaded = await this.loadCurrentUser();
+        if (!userLoaded) {
+            // User not authenticated, return early
+            return;
+        }
         this.loadDashboardData();
         this.attachEventListeners();
     }
@@ -14,19 +18,29 @@ class DashboardManager {
     async loadCurrentUser() {
         try {
             const response = await fetch('/api/current-user');
+            
+            if (!response.ok) {
+                console.error('Current user API error:', response.status);
+                window.location.href = '/login';
+                return false;
+            }
+            
             const result = await response.json();
             
             if (!result.success) {
                 // User not logged in, redirect to login
+                console.log('User not authenticated, redirecting to login');
                 window.location.href = '/login';
-                return;
+                return false;
             }
             
             this.currentUser = result.user;
             console.log('Current user loaded:', this.currentUser);
+            return true;
         } catch (error) {
             console.error('Error loading current user:', error);
             window.location.href = '/login';
+            return false;
         }
     }
 
@@ -42,6 +56,25 @@ class DashboardManager {
     async loadDashboardData() {
         try {
             const response = await fetch('/api/dashboard');
+            
+            // Handle authentication errors first
+            if (response.status === 401) {
+                console.log('Dashboard API: User not authenticated, redirecting to login');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Check if response is actually JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Expected JSON but received:', contentType);
+                console.error('Response status:', response.status);
+                
+                this.showError('Server returned an invalid response. Using sample data instead.');
+                this.loadSampleData();
+                return;
+            }
+            
             const result = await response.json();
 
             if (result.success) {
@@ -53,12 +86,14 @@ class DashboardManager {
                 await this.loadLeaderboard();
                 await this.loadRecentNotifications();
             } else {
-                console.error('Error loading dashboard:', result.error);
-                this.showError('Unable to load dashboard data.');
+                console.error('Error loading dashboard:', result.message);
+                this.showError('Unable to load dashboard data. Using sample data instead.');
+                this.loadSampleData();
             }
         } catch (error) {
             console.error('Network error loading dashboard:', error);
-            this.showError('Network error. Please check your connection.');
+            this.showError('Network error. Using sample data instead.');
+            this.loadSampleData();
         }
     }
 
@@ -102,13 +137,13 @@ class DashboardManager {
         
         const condition = book.condition || 'Unknown';
         const type = book.type || 'Unknown';
-        const imageUrl = book.image || '/images/book-placeholder.png';
+        const imageUrl = book.image || '/images/book-placeholder.svg';
         
         div.innerHTML = `
             <div class="book-card">
                 <div class="book-image">
                     <img src="${imageUrl}" alt="${book.title}" 
-                         onerror="this.src='/images/book-placeholder.png'">
+                         onerror="this.src='/images/book-placeholder.svg'">
                 </div>
                 <div class="book-details">
                     <h4 class="book-title">${book.title}</h4>
@@ -141,13 +176,30 @@ class DashboardManager {
     async loadAchievements() {
         try {
             const response = await fetch('/api/achievements');
+            
+            if (!response.ok) {
+                console.error('Achievements API error:', response.status);
+                this.displaySampleAchievements();
+                return;
+            }
+            
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Achievements API returned non-JSON response');
+                this.displaySampleAchievements();
+                return;
+            }
+            
             const result = await response.json();
 
             if (result.success) {
                 this.displayAchievements(result.achievements);
+            } else {
+                this.displaySampleAchievements();
             }
         } catch (error) {
             console.error('Error loading achievements:', error);
+            this.displaySampleAchievements();
         }
     }
 
@@ -165,6 +217,40 @@ class DashboardManager {
             const achievementElement = this.createAchievementElement(achievement);
             container.appendChild(achievementElement);
         });
+    }
+    
+    displaySampleAchievements() {
+        const sampleAchievements = [
+            {
+                _id: '1',
+                name: 'First Book Shared',
+                description: 'Share your very first book',
+                type: 'first_book',
+                points: 10,
+                isUnlocked: true,
+                dateEarned: new Date()
+            },
+            {
+                _id: '2',
+                name: 'Book Sharer',
+                description: 'Share 5 books with the community',
+                type: 'book_sharer',
+                points: 25,
+                isUnlocked: true,
+                dateEarned: new Date()
+            },
+            {
+                _id: '3',
+                name: 'Community Helper',
+                description: 'Help 10 fellow readers',
+                type: 'community_helper',
+                points: 50,
+                isUnlocked: false,
+                dateEarned: null
+            }
+        ];
+        
+        this.displayAchievements(sampleAchievements);
     }
 
     createAchievementElement(achievement) {
@@ -336,6 +422,43 @@ class DashboardManager {
         return date.toLocaleDateString();
     }
 
+    loadSampleData() {
+        // Create sample dashboard data
+        this.dashboardData = {
+            user: {
+                username: 'BookLover',
+                level: 3,
+                totalPoints: 180,
+                totalReviews: 8
+            },
+            stats: {
+                myBooks: 12,
+                unreadNotifications: 5,
+                totalAchievements: 6
+            },
+            recentBooks: [
+                {
+                    _id: '1',
+                    title: 'The Great Gatsby',
+                    author: 'F. Scott Fitzgerald',
+                    condition: 'Good',
+                    type: 'Swap',
+                    userId: { username: 'ClassicReader' }
+                },
+                {
+                    _id: '2',
+                    title: 'To Kill a Mockingbird',
+                    author: 'Harper Lee',
+                    condition: 'Excellent',
+                    type: 'Donate',
+                    userId: { username: 'BookGiver' }
+                }
+            ]
+        };
+        
+        this.updateDashboardDisplay();
+    }
+
     showError(message) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'dashboard-error';
@@ -349,10 +472,16 @@ class DashboardManager {
         `;
 
         const container = document.querySelector('.dashboard-container');
-        container.insertAdjacentElement('afterbegin', errorDiv);
+        if (container) {
+            container.insertAdjacentElement('afterbegin', errorDiv);
+        }
 
         // Auto remove after 10 seconds
-        setTimeout(() => errorDiv.remove(), 10000);
+        setTimeout(() => {
+            if (errorDiv && errorDiv.parentElement) {
+                errorDiv.remove();
+            }
+        }, 10000);
     }
 }
 

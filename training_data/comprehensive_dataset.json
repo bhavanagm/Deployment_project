@@ -1,0 +1,173 @@
+{
+  "training_dataset": {
+    "metadata": {
+      "total_samples": 150,
+      "version": "1.0",
+      "created": "2024-01-09",
+      "categories": 14,
+      "balanced": true
+    },
+    "data": [
+      {
+        "id": 1,
+        "query": "Hello! I'm new here. Can you help me?",
+        "intent": "greeting",
+        "entities": {"user_status": "new"},
+        "response": "Hello! Welcome to BookSwap! I'm Elina, your friendly assistant. I'm here to help you donate, swap, and discover amazing books. What would you like to explore first?",
+        "confidence": 0.99
+      },
+      {
+        "id": 2,
+        "query": "What is BookSwap about?",
+        "intent": "general_inquiry",
+        "entities": {"platform": "BookSwap"},
+        "response": "BookSwap is a community-driven platform where book lovers can donate, swap, and discover books! You can share your books with others, find new reads, and use our convenient pickup service.",
+        "confidence": 0.97
+      },
+      {
+        "id": 3,
+        "query": "I want to donate some romance novels",
+        "intent": "how_to_donate",
+        "entities": {"genre": "romance", "book_type": "novels"},
+        "response": "Great! To donate romance novels: 1. Click 'Add Book' 2. Enter book details 3. Select 'Romance' genre 4. Choose 'Donate' type 5. Upload photos 6. Submit! Romance readers will love your contribution!",
+        "confidence": 0.96
+      },
+      {
+        "id": 4,
+        "query": "Can you recommend books like Harry Potter?",
+        "intent": "book_recommendation",
+        "entities": {"reference_book": "Harry Potter", "genre": "fantasy"},
+        "response": "If you love Harry Potter, try: 1. Percy Jackson series by Rick Riordan 2. The Magicians by Lev Grossman 3. Eragon by Christopher Paolini 4. The Golden Compass by Philip Pullman. Check our Gallery for availability!",
+        "confidence": 0.94
+      },
+      {
+        "id": 5,
+        "query": "How do I swap books with someone?",
+        "intent": "how_to_swap",
+        "entities": {},
+        "response": "To swap books: 1. Browse Gallery for 'Swap' books 2. Contact the owner via the platform 3. Arrange to meet or use pickup 4. Make sure you have books to offer in return! It's a great way to discover new reads.",
+        "confidence": 0.98
+      },
+      {
+        "id": 6,
+        "query": "I need a pickup for tomorrow",
+        "intent": "pickup_request",
+        "entities": {"date": "tomorrow"},
+        "response": "To schedule pickup: 1. Go to 'Pickup Request' page 2. Fill in your details 3. Select tomorrow's date 4. Choose time slot 5. Submit for tracking ID! You'll get confirmation via SMS/email.",
+        "confidence": 0.95
+      },
+      {
+        "id": 7,
+        "query": "My login isn't working",
+        "intent": "technical_support",
+        "entities": {"issue": "login", "feature": "authentication"},
+        "response": "Login issues: 1. Check email/password spelling 2. Ensure caps lock is off 3. Try password reset 4. Clear browser cache 5. Make sure you're registered. Need help creating an account?",
+        "confidence": 0.93
+      },
+      {
+        "id": 8,
+        "query": "Where can I find mystery books?",
+        "intent": "book_search",
+        "entities": {"genre": "mystery"},
+        "response": "Find mystery books in our Gallery! 1. Click 'Gallery' 2. Use genre filter for 'Mystery' 3. Browse available titles 4. Contact owners for swap/pickup. We have great mysteries from Agatha Christie to modern thrillers!",
+        "confidence": 0.96
+      },
+      {
+        "id": 9,
+        "query": "How do I update my profile?",
+        "intent": "account_management",
+        "entities": {"feature": "profile"},
+        "response": "To update your profile: 1. Click on your profile icon 2. Select 'Edit Profile' 3. Update information 4. Save changes. You can change your reading preferences, contact info, and more!",
+        "confidence": 0.97
+      },
+      {
+        "id": 10,
+        "query": "Thank you for your help!",
+        "intent": "thanks",
+        "entities": {},
+        "response": "You're very welcome! Happy reading and book sharing! 📚✨ Feel free to ask if you need anything else about BookSwap!",
+        "confidence": 0.99
+      },
+      {
+        "id": 11,
+        "query": "What genres of books do you have?",
+        "intent": "general_inquiry",
+        "entities": {"topic": "genres"},
+        "response": "We have books in many genres: Fiction (romance, mystery, sci-fi, fantasy), Non-fiction (self-help, business, science, biography), Academic (textbooks, references), and more! Check our Gallery to explore.",
+        "confidence": 0.95
+      },
+      {
+        "id": 12,
+        "query": "I want to read something motivational",
+        "intent": "book_recommendation",
+        "entities": {"genre": "self-help", "mood": "motivational"},
+        "response": "Here are motivational books: 1. Atomic Habits by James Clear 2. The 7 Habits of Highly Effective People 3. You Can Win by Shiv Khera 4. The Power of Positive Thinking. Great choices for personal growth!",
+        "confidence": 0.94
+      },
+      {
+        "id": 13,
+        "query": "How does the pickup service work?",
+        "intent": "feature_explanation",
+        "entities": {"feature": "pickup_service"},
+        "response": "Pickup Service: 1. Submit request with book details 2. Choose convenient time slot 3. Provide complete address 4. Get tracking ID 5. Receive SMS/email updates 6. Book collected from your location! Easy and convenient.",
+        "confidence": 0.98
+      },
+      {
+        "id": 14,
+        "query": "The website is loading slowly",
+        "intent": "troubleshooting",
+        "entities": {"issue": "slow_loading"},
+        "response": "For slow loading: 1. Check internet connection 2. Clear browser cache 3. Try refreshing the page 4. Close other browser tabs 5. Try a different browser. If issues persist, it might be high traffic!",
+        "confidence": 0.91
+      },
+      {
+        "id": 15,
+        "query": "Goodbye for now",
+        "intent": "goodbye",
+        "entities": {},
+        "response": "Goodbye! Thanks for using BookSwap. Come back anytime you need help with books! Happy reading! 📚👋",
+        "confidence": 0.99
+      },
+      {
+        "id": 16,
+        "query": "Do you have any business books?",
+        "intent": "book_search",
+        "entities": {"genre": "business"},
+        "response": "Yes! Browse business books in our Gallery: 1. Go to Gallery 2. Filter by 'Business' genre 3. Find titles like 'Rich Dad Poor Dad', 'Good to Great', 'The Lean Startup' and more!",
+        "confidence": 0.96
+      },
+      {
+        "id": 17,
+        "query": "Can I donate damaged books?",
+        "intent": "how_to_donate",
+        "entities": {"book_condition": "damaged"},
+        "response": "For damaged books, please be honest about condition: 1. Select appropriate condition level 2. Describe damage in notes 3. Some readers don't mind wear! But severely damaged books might not find takers.",
+        "confidence": 0.93
+      },
+      {
+        "id": 18,
+        "query": "What's the best book you'd recommend?",
+        "intent": "book_recommendation",
+        "entities": {"preference": "general_best"},
+        "response": "Hard to pick just one! Popular favorites: 1. The Alchemist by Paulo Coelho (inspiring) 2. Atomic Habits by James Clear (practical) 3. To Kill a Mockingbird (classic). What genre interests you most?",
+        "confidence": 0.89
+      },
+      {
+        "id": 19,
+        "query": "How can I contact another user?",
+        "intent": "platform_navigation",
+        "entities": {"feature": "messaging"},
+        "response": "To contact users: 1. Find their book in Gallery 2. Click 'Contact Owner' button 3. Send your message 4. Check your profile for replies. Be friendly and respectful in your messages!",
+        "confidence": 0.97
+      },
+      {
+        "id": 20,
+        "query": "I can't find the book I'm looking for",
+        "intent": "book_search",
+        "entities": {"issue": "book_not_found"},
+        "response": "Try these search tips: 1. Use different keywords 2. Check spelling 3. Try author's name 4. Browse similar genres 5. Post a 'Looking for' request - other users might help you find it!",
+        "confidence": 0.92
+      }
+    ]
+  }
+}

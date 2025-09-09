@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Pickup Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: linear-gradient(135deg, #F5F0FF 0%, #E6DDF0 25%, #D8C7E8 50%, #C8B2DB 75%, #B19CD9 100%);
+      min-height: 100vh;
+    }
+    .test-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(177, 156, 217, 0.35);
+    }
+    .test-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #B19CD9 0%, #C8B2DB 50%, #E6DDF0 100%);
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 25px;
+      margin: 10px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(177, 156, 217, 0.3);
+    }
+    .test-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(177, 156, 217, 0.45);
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1 style="text-align: center; background: linear-gradient(135deg, #9A4F96 0%, #B19CD9 50%, #C8B2DB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+      🌿 Lavender BookSwap Test Suite
+    </h1>
+    
+    <div class="status info">
+      <strong>Testing Suite Status:</strong> Ready to test all functionality
+    </div>
+    
+    <h3>🔧 Test Links:</h3>
+    
+    <a href="/pickup-request" class="test-button">
+      📦 Test Pickup Form
+    </a>
+    
+    <a href="/gallery" class="test-button">
+      📚 Test Gallery
+    </a>
+    
+    <a href="/home" class="test-button">
+      🏠 Test Home Page
+    </a>
+    
+    <a href="/profile" class="test-button">
+      👤 Test Profile
+    </a>
+    
+    <h3>🎨 Theme Tests:</h3>
+    
+    <div style="background: var(--gradient-primary, linear-gradient(135deg, #B19CD9 0%, #C8B2DB 50%, #E6DDF0 100%)); padding: 15px; border-radius: 10px; color: white; margin: 10px 0;">
+      <strong>Primary Gradient Test</strong> - This should show the lavender gradient
+    </div>
+    
+    <div style="background: var(--gradient-secondary, linear-gradient(135deg, #9A4F96 0%, #B19CD9 50%, #C8B2DB 100%)); padding: 15px; border-radius: 10px; color: white; margin: 10px 0;">
+      <strong>Secondary Gradient Test</strong> - This should show the deeper lavender gradient
+    </div>
+    
+    <div style="background: var(--gradient-soft, linear-gradient(135deg, #F5F0FF 0%, #E6DDF0 50%, #D8C7E8 100%)); padding: 15px; border-radius: 10px; color: #9A4F96; margin: 10px 0;">
+      <strong>Soft Gradient Test</strong> - This should show the light lavender gradient
+    </div>
+    
+    <h3>🚀 API Tests:</h3>
+    
+    <button onclick="testAPI()" class="test-button">
+      ⚡ Test API Connection
+    </button>
+    
+    <button onclick="testPickupAPI()" class="test-button">
+      📦 Test Pickup API
+    </button>
+    
+    <div id="api-results" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    async function testAPI() {
+      const results = document.getElementById('api-results');
+      results.innerHTML = '<div class="status info">Testing API connections...</div>';
+      
+      try {
+        // Test books API
+        const booksResponse = await fetch('/api/books');
+        const booksData = await booksResponse.json();
+        
+        // Test current user API
+        const userResponse = await fetch('/api/current-user');
+        const userData = await userResponse.json();
+        
+        results.innerHTML = `
+          <div class="status success">✅ Books API: ${booksData.success ? 'Working' : 'Failed'} - Found ${booksData.count || 0} books</div>
+          <div class="status ${userData.success ? 'success' : 'info'}">👤 User API: ${userData.success ? `Logged in as ${userData.user?.username || 'User'}` : 'Not logged in'}</div>
+        `;
+      } catch (error) {
+        results.innerHTML = `<div class="status error">❌ API Test Failed: ${error.message}</div>`;
+      }
+    }
+    
+    async function testPickupAPI() {
+      const results = document.getElementById('api-results');
+      results.innerHTML = '<div class="status info">Testing pickup API...</div>';
+      
+      // Test data
+      const testData = {
+        userName: 'Test User',
+        bookTitle: 'Test Book',
+        email: 'test@example.com',
+        mobile: '+1234567890',
+        pickupAddress: '123 Test Street, Test City, Test Country',
+        pickupType: 'single',
+        preferredDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+        preferredTime: '09:00-12:00',
+        specialInstructions: 'This is a test request',
+        notificationPreferences: {
+          sms: true,
+          email: true,
+          push: true
+        }
+      };
+      
+      try {
+        const response = await fetch('/api/pickup-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(testData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          results.innerHTML = `<div class="status success">✅ Pickup API Working! Tracking ID: ${result.trackingId}</div>`;
+        } else {
+          results.innerHTML = `<div class="status error">❌ Pickup API Error: ${result.message}</div>`;
+        }
+      } catch (error) {
+        results.innerHTML = `<div class="status error">❌ Pickup API Test Failed: ${error.message}</div>`;
+      }
+    }
+    
+    // Auto-test on page load
+    window.addEventListener('load', () => {
+      console.log('🌿 Lavender BookSwap Test Suite Loaded');
+      console.log('CSS Custom Properties should be:', {
+        '--lavender-primary': '#B19CD9',
+        '--lavender-secondary': '#C8B2DB',
+        '--lavender-deep': '#9A4F96'
+      });
+    });
+  </script>
+</body>
+</html>

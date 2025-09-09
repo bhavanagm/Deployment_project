@@ -2,70 +2,249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Book Swap & Donation Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookSwap NYC - Share Books, Build Community</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  
   <style>
+    /* NYC Index Page Styles */
     body {
+      background: linear-gradient(135deg, var(--bg-lavender-50) 0%, var(--bg-lavender-100) 50%, var(--bg-lavender-200) 100%);
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
     }
 
-    /* Navbar */
+    /* NYC Navbar */
     .navbar {
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #4b6cb7;
-      color: white;
-      padding: 15px 25px;
+      box-shadow: var(--shadow-2xl);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-secondary);
     }
 
     .nav-links {
       list-style: none;
       display: flex;
-      gap: 1rem;
+      gap: var(--space-xl);
       padding: 0;
       margin: 0;
+      align-items: center;
     }
 
     .nav-links li a {
-      color: white;
+      color: var(--white);
       text-decoration: none;
       font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
     }
 
+    /* Hero Section */
     .hero {
-      background: linear-gradient(to right, #4b6cb7, #182848);
-      color: white;
-      padding: 4rem 1rem;
+      background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 100%);
+      color: var(--white);
+      padding: var(--space-3xl) var(--space-2xl);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hero::before {
+      content: '🏙️📚';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      font-size: 15rem;
+      opacity: 0.1;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      z-index: 2;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: var(--space-xl);
+      background: linear-gradient(45deg, var(--white), var(--taxi-yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: var(--font-secondary);
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: var(--space-2xl);
+      opacity: 0.9;
+      color: #e4e1e9;
     }
 
     .btn-primary {
-      background: #ffc107;
-      color: black;
-      padding: 10px 20px;
+      background: var(--taxi-yellow);
+      color: var(--black);
+      padding: var(--space-lg) var(--space-2xl);
       text-decoration: none;
-      font-weight: bold;
-      border-radius: 5px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      font-size: 1.1rem;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-lg);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-2xl);
+      background: var(--subway-orange);
     }
 
-    /* Carousel */
-    .carousel-section {
-      background: #f5f5f5;
-      padding: 2rem;
+    /* Features Section */
+    .features {
+      padding: var(--space-3xl) var(--space-xl);
+      background: rgba(255, 255, 255, 0.9);
+      position: relative;
+    }
+    
+    .features::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><polygon points="0,0 100,0 80,20 0,20" fill="%231E3A8A" opacity="0.05"/></svg>');
+      pointer-events: none;
+    }
+
+    .features h2 {
       text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: var(--space-2xl);
+      color: #a596d3;
+      font-family: var(--font-secondary);
+      position: relative;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: var(--space-2xl);
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .feature-item {
+      background: var(--glass-white);
+      padding: var(--space-2xl);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+      transition: all var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-2xl);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .feature-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-primary);
+      transition: left var(--transition-smooth);
+    }
+    
+    .feature-item:hover::before {
+      left: 0;
+    }
+
+    .feature-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-lg);
+      display: block;
+    }
+    
+    .feature-item h3 {
+      color: var(--gray-800);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+    }
+    
+    .feature-item p {
+      color: var(--gray-700);
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    /* Book Carousel */
+    .carousel-section {
+      background: var(--glass-light);
+      padding: var(--space-3xl) var(--space-xl);
+      text-align: center;
+      position: relative;
+    }
+    
+    .carousel-section h2 {
+      color: var(--gray-800);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: var(--space-2xl);
+      font-family: var(--font-secondary);
     }
 
     .carousel-wrapper {
       overflow: hidden;
       position: relative;
       width: 100%;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
     }
 
     .carousel-track {
@@ -78,9 +257,15 @@
       height: 220px;
       width: 150px;
       object-fit: cover;
-      margin: 0 10px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin: 0 var(--space-md);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .carousel-track img:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-xl);
     }
 
     @keyframes scroll {
@@ -99,16 +284,16 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 5px;
+      padding: var(--space-sm);
     }
 
     .hamburger-line {
       width: 25px;
       height: 3px;
-      background: white;
+      background: var(--white);
       margin: 2px 0;
-      transition: 0.3s;
-      border-radius: 2px;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
     }
 
     /* Mobile styles */
@@ -123,13 +308,14 @@
         right: -100%;
         width: 100%;
         height: calc(100vh - 70px);
-        background: #4b6cb7;
+        background: var(--gradient-dark);
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        padding-top: 2rem;
-        transition: right 0.3s ease;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
         z-index: 1000;
+        backdrop-filter: blur(10px);
       }
 
       .nav-links.active {
@@ -137,21 +323,23 @@
       }
 
       .nav-links li {
-        margin: 1rem 0;
+        margin: var(--space-lg) 0;
       }
 
       .nav-links li a {
         font-size: 1.2rem;
-        padding: 1rem 2rem;
+        padding: var(--space-lg) var(--space-2xl);
         display: block;
         text-align: center;
         width: 100%;
-        border-radius: 8px;
-        transition: background 0.3s ease;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+        background: var(--glass-white);
       }
 
       .nav-links li a:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--glass-light);
+        transform: translateX(5px);
       }
 
       .hamburger-menu.active .hamburger-line:nth-child(1) {
@@ -167,246 +355,189 @@
       }
     }
 
-    /* Feature Cards Hover Effects */
-    .feature-card:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
-    }
-
-    .feature-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      filter: brightness(1.1);
-    }
-
-    .feature-btn:active {
-      transform: translateY(0px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    /* Pulse Animation for feature cards */
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .feature-card:nth-child(odd) {
-      animation: pulse 3s ease-in-out infinite alternate;
-    }
-
-    .feature-card:nth-child(even) {
-      animation: pulse 3s ease-in-out infinite alternate-reverse;
-    }
-
-    /* Call to Action Buttons Hover Effects */
-    .cta-primary:hover {
-      background: #e6ac00 !important;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
-    }
-
-    .cta-secondary:hover {
-      background: rgba(255,255,255,0.3) !important;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
-    }
-
-    /* Responsive adjustments for features */
-    @media (max-width: 768px) {
-      .feature-card {
-        padding: 1.5rem !important;
-      }
-      
-      .feature-card h3 {
-        font-size: 1.2rem !important;
-      }
-      
-      .feature-btn {
-        padding: 10px 20px !important;
-        font-size: 0.9rem !important;
-      }
-    }
-
     /* Footer */
     footer {
-      background: #2b2b2b;
-      color: white;
-      padding: 1rem;
       text-align: center;
+      padding: var(--space-3xl) var(--space-xl);
+      background: var(--gradient-dark);
+      color: var(--white);
+      position: relative;
+      margin-top: var(--space-3xl);
+    }
+    
+    footer::before {
+      content: '🗽';
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 3rem;
+      opacity: 0.2;
+    }
+    
+    footer p {
+      font-size: 1.1rem;
+      margin: 0;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    /* Responsive Design Enhancements */
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .feature-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+      
+      .carousel-track img {
+        height: 180px;
+        width: 130px;
+      }
     }
   </style>
 </head>
 <body>
 
   <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">📚 BookSwap</div>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
+    </div>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/add-book">Add Book</a></li>
+      <li><a href="/gallery">Gallery</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/profile">Profile</a></li>
+       <li><a href="/Pickup">Pickup</a></li>
+      <li><a href="/pickup-track">Track</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
     
     <!-- Hamburger Menu Button -->
-    <button class="hamburger-menu" id="hamburger-toggle" aria-label="Menu">
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
     </button>
-    
-    <!-- Navigation Links -->
-    <ul class="nav-links" id="nav-menu">
-      <li><a href="/index">🏠 Home</a></li>
-      <li><a href="/add-book">➕ Add Book</a></li>
-      <li><a href="/gallery">📖 Gallery</a></li>
-      <li><a href="/pickup-request">🚚 Pickup</a></li>
-      <li><a href="/dashboard">📊 Dashboard</a></li>
-      <li><a href="/profile">👤 Profile</a></li>
-      <li><a href="/chatbot">🤖 Chat</a></li>
-      <li><a href="/logout">🚺 Logout</a></li>
-    </ul>
-  </header>
+  </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <h1>Welcome to Book Swap & Donation Platform</h1>
-    <p>Give books a new life! List your used books, donate to others, or swap for something new.</p>
-    <div style="margin-top: 2rem;">
-      <a href="/dashboard" class="btn-primary" style="margin: 0.5rem;">📊 View Dashboard</a>
-      <a href="/add-book" class="btn-primary" style="margin: 0.5rem;">➕ Add a Book</a>
-      <a href="/gallery" class="btn-primary" style="margin: 0.5rem;">📖 Browse Gallery</a>
+    <div class="hero-content">
+      <h1>BookSwap</h1>
+      <p>Connect with fellow New Yorkers! Share, donate, and discover books across the five boroughs. Give books a new life in the city that never sleeps.</p>
+      <div style="margin-top: var(--space-2xl); display: flex; gap: var(--space-lg); flex-wrap: wrap; justify-content: center;">
+        <a href="/login" class="btn-primary">
+          🚪 Get Started
+        </a>
+        <a href="/gallery" class="btn-primary">
+          📖 Browse Books
+        </a>
+      </div>
     </div>
   </section>
 
    <!-- Carousel Section -->
 <section class="carousel-section">
-  <h2>📚 Popular Books</h2>
-  <div class="carousel-track">
-    <img src="/uploads/book01.jpeg" alt="Book-id 1">
-    <img src="/uploads/book02.jpeg" alt="Book-id 2">
-    <img src="/uploads/book03.jpeg" alt="Book-id 3">
-    <img src="/uploads/book04.jpeg" alt="Book-id 4">
-    <img src="/uploads/book05.jpeg" alt="Book-id 5">
-    <img src="/uploads/book06.jpeg" alt="Book-id 6">
-    <img src="/uploads/book07.jpeg" alt="Book-id 7">
-    <img src="/uploads/book08.jpeg" alt="Book-id 8">
-    <img src="/uploads/book09.jpeg" alt="Book-id 9">
-    <img src="/uploads/book010.jpeg" alt="Book-id 9">
+  <h2>🏙️ Popular Books </h2>
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <img src="/uploads/book01.jpeg" alt="Book-id 1">
+      <img src="/uploads/book02.jpeg" alt="Book-id 2">
+      <img src="/uploads/book03.jpeg" alt="Book-id 3">
+      <img src="/uploads/book04.jpeg" alt="Book-id 4">
+      <img src="/uploads/book05.jpeg" alt="Book-id 5">
+      <img src="/uploads/book06.jpeg" alt="Book-id 6">
+      <img src="/uploads/book07.jpeg" alt="Book-id 7">
+      <img src="/uploads/book08.jpeg" alt="Book-id 8">
+      <img src="/uploads/book09.jpeg" alt="Book-id 9">
+      <img src="/uploads/book010.jpeg" alt="Book-id 10">
+      <!-- Duplicate for seamless scrolling -->
+      <img src="/uploads/book01.jpeg" alt="Book-id 1">
+      <img src="/uploads/book02.jpeg" alt="Book-id 2">
+      <img src="/uploads/book03.jpeg" alt="Book-id 3">
+      <img src="/uploads/book04.jpeg" alt="Book-id 4">
+      <img src="/uploads/book05.jpeg" alt="Book-id 5">
+    </div>
   </div>
 </section>
   
   <!-- Features Section -->
-  <section style="padding: 3rem 1rem; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-      <h2 style="color: #4b6cb7; margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">✨ Exciting New Features</h2>
-      <p style="color: #666; font-size: 1.1rem; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">Discover amazing new ways to connect, share, and explore books in our enhanced platform!</p>
+  <section class="features">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2>✨ Why Choose BookSwap?</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 1.2rem; margin-bottom: var(--space-3xl); max-width: 600px; margin-left: auto; margin-right: auto;">Connect with fellow book lovers across the five boroughs and give your books a new adventure!</p>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
-        <!-- Personal Dashboard -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Personal Dashboard</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Track your books, achievements, and community contributions all in one personalized space.</p>
-          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">📊 Try Dashboard</button>
+      <div class="feature-grid">
+        <!-- NYC Community -->
+        <div class="feature-item">
+          <div class="feature-icon">🏙️</div>
+          <h3>NYC Community</h3>
+          <p>Connect with readers from Manhattan to Queens, Brooklyn to the Bronx, and everywhere in between!</p>
         </div>
         
-        <!-- Rating System -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">⭐</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Smart Rating System</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Rate and review books to help the community discover amazing reads and hidden gems.</p>
-          <button onclick="window.location.href='/gallery'" class="feature-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">⭐ Start Rating</button>
+        <!-- Easy Sharing -->
+        <div class="feature-item">
+          <div class="feature-icon">📚</div>
+          <h3>Easy Book Sharing</h3>
+          <p>List your books in seconds with our intuitive interface. Upload photos, set availability, and connect instantly.</p>
         </div>
         
-        <!-- Messaging System -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Instant Messaging</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Connect directly with book owners and fellow readers in real-time conversations.</p>
-          <button onclick="window.location.href='/profile'" class="feature-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">💬 Try Messaging</button>
-        </div>
-        
-        <!-- Achievements -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Achievement System</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Earn badges, unlock levels, and showcase your contributions to the reading community.</p>
-          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🏆 View Achievements</button>
-        </div>
-        
-        <!-- Smart Notifications -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔔</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">Smart Notifications</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Stay updated with intelligent notifications about messages, requests, and community activity.</p>
-          <button onclick="window.location.href='/dashboard'" class="feature-btn" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🔔 Enable Notifications</button>
-        </div>
-        
-        <!-- AI Chatbot -->
-        <div class="feature-card" style="padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background: white; transition: all 0.3s ease; position: relative; overflow: hidden;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
-          <h3 style="color: #4b6cb7; margin-bottom: 1rem; font-size: 1.4rem;">AI Reading Assistant</h3>
-          <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">Get instant help, personalized book recommendations, and smart reading insights.</p>
-          <button onclick="window.location.href='/chatbot'" class="feature-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">🤖 Chat with Elina</button>
-        </div>
-      </div>
-      
-      <!-- Call to Action -->
-      <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white; text-align: center;">
-        <h3 style="margin-bottom: 1rem; font-size: 1.8rem;">🚀 Ready to Explore?</h3>
-        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; opacity: 0.9;">Join thousands of book lovers already using our platform!</p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button onclick="window.location.href='/add-book'" class="cta-primary" style="background: #ffc107; color: #333; border: none; padding: 15px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem;">➕ Add Your First Book</button>
-          <button onclick="window.location.href='/gallery'" class="cta-secondary" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 15px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem;">📚 Browse Books</button>
+        <!-- Smart Matching -->
+        <div class="feature-item">
+          <div class="feature-icon">🧠</div>
+          <h3>Smart Recommendations</h3>
+          <p>Our AI chatbot helps you discover new reads based on your interests and past exchanges.</p>
         </div>
       </div>
     </div>
   </section>
 
-
-
-
-
   <!-- Footer -->
   <footer>
-    <p>&copy; 2025 BookSwap Platform | Built with ❤️ by Bhavana G M</p>
+    <p>&copy; 2025 BookSwap | Connecting readers across the five boroughs 🏙️</p>
   </footer>
 
+  <!-- Chatbot Integration -->
+  <script src="/js/chatbot.js"></script>
 
-  <!-- Hamburger Menu JavaScript -->
+  <!-- Navigation JavaScript -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const hamburgerToggle = document.getElementById('hamburger-toggle');
-      const navMenu = document.getElementById('nav-menu');
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
       
-      if (hamburgerToggle && navMenu) {
-        hamburgerToggle.addEventListener('click', function() {
+      if (hamburgerMenu && navLinks) {
+        hamburgerMenu.addEventListener('click', function() {
           // Toggle active class on hamburger button
-          hamburgerToggle.classList.toggle('active');
+          hamburgerMenu.classList.toggle('active');
           
           // Toggle active class on navigation menu
-          navMenu.classList.toggle('active');
+          navLinks.classList.toggle('active');
         });
         
         // Close menu when clicking on a link (mobile)
-        const navLinks = navMenu.querySelectorAll('a');
-        navLinks.forEach(link => {
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
           link.addEventListener('click', () => {
-            hamburgerToggle.classList.remove('active');
-            navMenu.classList.remove('active');
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
           });
         });
         
         // Close menu when clicking outside (mobile)
         document.addEventListener('click', function(event) {
-          const isClickInsideNav = navMenu.contains(event.target);
-          const isClickOnHamburger = hamburgerToggle.contains(event.target);
+          const isClickInsideNav = navLinks.contains(event.target);
+          const isClickOnHamburger = hamburgerMenu.contains(event.target);
           
-          if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
-            hamburgerToggle.classList.remove('active');
-            navMenu.classList.remove('active');
+          if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
           }
         });
       }

@@ -4,7 +4,136 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile - BookSwap</title>
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
   <style>
+    /* NYC Navbar */
+    .navbar {
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-2xl);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-secondary);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: var(--space-xl);
+      padding: 0;
+      margin: 0;
+      align-items: center;
+    }
+
+    .nav-links li a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
+    /* Hamburger Menu */
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-sm);
+    }
+
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: var(--white);
+      margin: 2px 0;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: var(--gradient-dark);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: var(--space-lg) 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: var(--space-lg) var(--space-2xl);
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-normal);
+        background: var(--glass-white);
+      }
+
+      .nav-links li a:hover {
+        background: var(--glass-light);
+        transform: translateX(5px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .hamburger-line:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+    }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -396,6 +525,31 @@
 </head>
 <body>
 
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
+    </div>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/add-book">Add Book</a></li>
+      <li><a href="/gallery">Gallery</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/Pickup">Pickup</a></li>
+      <li><a href="/pickup-track">Track</a></li>
+    </ul>
+    
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </nav>
+
   <div class="profile-container">
     <!-- Profile Header -->
     <div class="profile-header">
@@ -720,6 +874,47 @@
           card.style.opacity = '1';
         });
       }, 500);
+    });
+  </script>
+  
+  <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      if (hamburgerMenu && navLinks) {
+        hamburgerMenu.addEventListener('click', function() {
+          // Toggle active class on hamburger button
+          hamburgerMenu.classList.toggle('active');
+          
+          // Toggle active class on navigation menu
+          navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link (mobile)
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+        
+        // Close menu when clicking outside (mobile)
+        document.addEventListener('click', function(event) {
+          const isClickInsideNav = navLinks.contains(event.target);
+          const isClickOnHamburger = hamburgerMenu.contains(event.target);
+          
+          if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          }
+        });
+      }
     });
   </script>
 

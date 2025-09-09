@@ -1,0 +1,13 @@
+<svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D8B4FE;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="400" fill="url(#bookGrad)" rx="12" ry="12"/>
+  <text x="50%" y="45%" font-family="Arial" font-size="48" text-anchor="middle" fill="white">📚</text>
+  <text x="50%" y="60%" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Book Placeholder</text>
+  <text x="50%" y="70%" font-family="Arial" font-size="12" text-anchor="middle" fill="rgba(255,255,255,0.8)">No Image Available</text>
+  <text x="50%" y="90%" font-family="Arial" font-size="10" text-anchor="middle" fill="rgba(255,255,255,0.6)">BookSwap</text>
+</svg>

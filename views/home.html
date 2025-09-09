@@ -4,18 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BookSwap - Share Knowledge, Spread Joy</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* Home page specific overrides */
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      line-height: 1.6;
-      color: #333;
       overflow-x: hidden;
+      background: linear-gradient(135deg, var(--bg-lavender-50) 0%, var(--bg-lavender-100) 50%, var(--bg-lavender-200) 100%) !important;
+      min-height: 100vh;
     }
 
     /* Header */
@@ -24,11 +28,12 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: #6d56b0;
       backdrop-filter: blur(20px);
       z-index: 1000;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      padding: var(--space-lg) var(--space-2xl);
+      box-shadow: var(--shadow-lg);
+      border-bottom: 1px solid var(--gray-200);
     }
 
     .nav-container {
@@ -38,57 +43,57 @@
       max-width: 1200px;
       margin: 0 auto;
     }
-
-    .logo {
+    
+    .navbar-brand {
+      color: var(--white);
       font-size: 1.5rem;
-      font-weight: 700;
-      color: #667eea;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-weight: 800;
+      margin: 0;
+      font-family: var(--font-secondary);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: var(--space-2xl);
     }
 
     .nav-link {
       text-decoration: none;
-      color: #64748b;
+      color: var(--white);
       font-weight: 500;
-      transition: color 0.3s ease;
+      transition: all var(--transition-normal);
     }
 
     .nav-link:hover {
-      color: #667eea;
+      color: rgba(255, 255, 255, 0.8);
     }
 
     .login-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 0.75rem 1.5rem;
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: var(--space-md) var(--space-lg);
       border: none;
-      border-radius: 50px;
+      border-radius: var(--radius-full);
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-sm);
+      box-shadow: var(--shadow-lavender);
     }
 
     .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 12px 35px rgba(177, 156, 217, 0.5);
     }
 
     /* Hero Section */
     .hero {
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 50%, var(--gray-800) 100%);
       display: flex;
       align-items: center;
       position: relative;
@@ -98,15 +103,15 @@
     .hero-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 var(--space-2xl);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: var(--space-3xl);
       align-items: center;
     }
 
     .hero-content {
-      color: white;
+      color: var(--white);
       z-index: 2;
     }
 
@@ -114,58 +119,63 @@
       font-size: 3.5rem;
       font-weight: 700;
       line-height: 1.2;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(45deg, #ffffff, #e0e7ff);
+      margin-bottom: var(--space-lg);
+      background: linear-gradient(45deg, var(--white), var(--ultra-light-purple));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      font-family: var(--font-secondary);
     }
 
     .hero-subtitle {
       font-size: 1.25rem;
-      margin-bottom: 2rem;
+      margin-bottom: var(--space-2xl);
       opacity: 0.9;
+      font-family: var(--font-primary);
+      color: #d8d5df;
     }
 
     .cta-buttons {
       display: flex;
-      gap: 1rem;
+      gap: var(--space-lg);
       flex-wrap: wrap;
     }
 
     .cta-btn {
-      padding: 1rem 2rem;
+      padding: var(--space-lg) var(--space-2xl);
       border: none;
-      border-radius: 50px;
+      border-radius: var(--radius-full);
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-sm);
       font-size: 1.1rem;
+      font-family: var(--font-primary);
     }
 
     .cta-primary {
-      background: white;
-      color: #667eea;
+      background: var(--white);
+      color: var(--gray-800);
+      box-shadow: var(--shadow-lg);
     }
 
     .cta-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2);
+      box-shadow: var(--shadow-2xl);
     }
 
     .cta-secondary {
       background: transparent;
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: var(--white);
+      border: 2px solid var(--glass-border);
     }
 
     .cta-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: white;
+      background: var(--glass-bg);
+      border-color: var(--white);
     }
 
     /* Hero Animation */
@@ -258,8 +268,8 @@
 
     /* Features Section */
     .features {
-      padding: 6rem 2rem;
-      background: #f8fafc;
+      padding: var(--space-3xl) var(--space-2xl);
+      background: var(--bg-gradient-soft);
     }
 
     .features-container {
@@ -271,8 +281,9 @@
       text-align: center;
       font-size: 3rem;
       font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 4rem;
+      color: var(--gray-800);
+      margin-bottom: var(--space-3xl);
+      font-family: var(--font-secondary);
     }
 
     .features-grid {
@@ -495,7 +506,7 @@
   <!-- Header -->
   <header class="header">
     <div class="nav-container">
-      <div class="logo">
+      <div class="navbar-brand">
         📚 BookSwap
       </div>
       <nav class="nav-links">
@@ -821,5 +832,8 @@
       });
     });
   </script>
+  
+  <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
 </body>
 </html>

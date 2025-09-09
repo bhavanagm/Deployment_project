@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <title>Login - BookSwap</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
   <style>
     * {
       margin: 0;
@@ -12,8 +18,8 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: var(--font-primary);
+      background: linear-gradient(135deg, var(--bg-lavender-50) 0%, var(--bg-lavender-100) 50%, var(--bg-lavender-200) 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -41,21 +47,18 @@
     }
 
     .login-container {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--glass-white);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      padding: 48px 40px;
+      border-radius: var(--radius-2xl);
+      padding: var(--space-3xl) var(--space-2xl);
       width: 100%;
       max-width: 420px;
-      box-shadow: 
-        0 20px 25px -5px rgba(0, 0, 0, 0.1),
-        0 10px 10px -5px rgba(0, 0, 0, 0.04),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-2xl);
       position: relative;
       z-index: 10;
       transform: translateY(0);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all var(--transition-smooth);
     }
 
     .login-container:hover {
@@ -67,12 +70,12 @@
 
     .brand-header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: var(--space-2xl);
     }
 
     .logo {
       font-size: 3rem;
-      margin-bottom: 12px;
+      margin-bottom: var(--space-md);
       display: block;
       animation: bounce 2s ease-in-out infinite;
     }
@@ -86,30 +89,31 @@
     .brand-title {
       font-size: 2rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--gradient-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 8px;
+      margin-bottom: var(--space-sm);
+      font-family: var(--font-secondary);
     }
 
     .brand-subtitle {
-      color: #64748b;
+      color: var(--text-muted);
       font-size: 0.95rem;
       font-weight: 400;
       line-height: 1.5;
     }
 
     .form-group {
-      margin-bottom: 24px;
+      margin-bottom: var(--space-xl);
       position: relative;
     }
 
     .form-label {
       display: block;
       font-weight: 500;
-      color: #374151;
-      margin-bottom: 8px;
+      color: var(--text-dark);
+      margin-bottom: var(--space-sm);
       font-size: 0.875rem;
       letter-spacing: 0.025em;
     }
@@ -130,40 +134,40 @@
 
     .form-input {
       width: 100%;
-      padding: 16px 16px 16px 50px;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
+      padding: var(--space-lg) var(--space-lg) var(--space-lg) 50px;
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
       font-size: 1rem;
       font-weight: 400;
       background: rgba(255, 255, 255, 0.8);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all var(--transition-smooth);
       outline: none;
     }
 
     .form-input:focus {
-      border-color: #667eea;
-      background: rgba(255, 255, 255, 1);
+      border-color: var(--nyc-blue);
+      background: var(--white);
       box-shadow: 
-        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 0 0 3px rgba(30, 58, 138, 0.1),
         0 1px 3px 0 rgba(0, 0, 0, 0.1);
     }
 
     .form-input:focus + .input-icon,
     .form-input:not(:placeholder-shown) + .input-icon {
-      color: #667eea;
+      color: var(--nyc-blue);
     }
 
     .login-btn {
       width: 100%;
-      padding: 16px 24px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--gradient-primary);
+      color: var(--white);
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all var(--transition-smooth);
       position: relative;
       overflow: hidden;
       text-transform: uppercase;
@@ -183,9 +187,7 @@
 
     .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 
-        0 10px 25px -5px rgba(102, 126, 234, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-2xl);
     }
 
     .login-btn:hover::before {
@@ -199,8 +201,8 @@
     .divider {
       display: flex;
       align-items: center;
-      margin: 32px 0;
-      color: #9ca3af;
+      margin: var(--space-2xl) 0;
+      color: var(--text-muted);
       font-size: 0.875rem;
     }
 
@@ -209,25 +211,25 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: #e5e7eb;
+      background: var(--border-light);
     }
 
     .divider span {
-      padding: 0 16px;
+      padding: 0 var(--space-lg);
       font-weight: 500;
     }
 
     .signup-link {
       text-align: center;
-      color: #64748b;
+      color: var(--text-muted);
       font-size: 0.9rem;
     }
 
     .signup-link a {
-      color: #667eea;
+      color: var(--nyc-blue);
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
       position: relative;
     }
 
@@ -238,8 +240,8 @@
       height: 2px;
       bottom: -2px;
       left: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s ease;
+      background: var(--gradient-primary);
+      transition: width var(--transition-normal);
     }
 
     .signup-link a:hover::after {
@@ -247,7 +249,7 @@
     }
 
     .signup-link a:hover {
-      color: #5a67d8;
+      color: var(--taxi-yellow);
     }
 
     .alert {
@@ -418,9 +420,9 @@
   <div class="login-container" id="loginBox">
     <!-- Brand Header -->
     <div class="brand-header">
-      <div class="logo">📚</div>
-      <h1 class="brand-title">BookSwap</h1>
-      <p class="brand-subtitle">Share knowledge, spread joy through books</p>
+      <div class="logo">🏙️📚</div>
+      <h1 class="brand-title">Book Share NYC</h1>
+      <p class="brand-subtitle">Connecting readers across the five boroughs</p>
     </div>
 
     <!-- Alert Messages -->
@@ -491,6 +493,9 @@
   </div>
 
   <script src="/js/login.js"></script>
+  
+  <!-- Enhanced Chatbot Script -->
+  <script src="/js/chatbot.js"></script>
 
 </body>
 </html>

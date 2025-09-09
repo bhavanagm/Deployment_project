@@ -3,373 +3,816 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Book Gallery</title>
+  <title>Book Gallery - Book SWap and Donate</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="/css/theme.css">
+  
+  <!-- Enhanced Chatbot CSS -->
+  <link rel="stylesheet" href="/css/chatbot.css">
+  
   <style>
+    /* NYC Gallery Theme Styles */
     body {
+      font-family: var(--font-primary);
+      background: var(--bg-gradient-main);
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f4f4;
-      color: #333;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-
+    
+    /* Navbar Styles */
     .navbar {
-      background-color: #3f51b5;
-      color: white;
-      padding: 15px 30px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: #6d56b0;
+      color: var(--white);
+      padding: var(--space-lg) var(--space-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: var(--shadow-2xl);
+      backdrop-filter: blur(10px);
     }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
+    
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-secondary);
     }
-
-    .hamburger {
-      font-size: 28px;
-      font-weight: bold;
+    
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: var(--space-xl);
+      padding: 0;
+      margin: 0;
+      align-items: center;
+    }
+    
+    .nav-links li a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+    
+    .nav-links li a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
       cursor: pointer;
+      padding: var(--space-sm);
     }
 
-    .side-menu {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 0;
-      height: 100%;
-      overflow: hidden;
-      background-color: #3f51b5;
-      color: white;
+    .hamburger-line {
+      width: 25px;
+      height: 3px;
+      background: var(--white);
+      margin: 2px 0;
+      transition: var(--transition-normal);
+      border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: #6d56b0;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--space-2xl);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .nav-links li {
+        margin: var(--space-lg) 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.2rem;
+        padding: var(--space-lg) var(--space-2xl);
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: var(--radius-lg);
+      }
+    }
+
+    /* Main Content */
+    main {
+      padding-top: 100px;
+      min-height: calc(100vh - 200px);
+      flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      padding: 60px 20px;
-      gap: 20px;
-      transition: width 0.3s ease;
-      z-index: 1000;
     }
 
-    .side-menu a {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      font-size: 18px;
-      text-decoration: none;
-      color: white;
-    }
-
-    .side-menu.show {
-      width: 250px;
-    }
-
-    .side-menu.show a {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    /* Gallery Header with Animation */
     .gallery-header {
       text-align: center;
-      padding: 30px 20px 10px;
+      padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+      background: var(--glass-white);
+      margin: var(--space-2xl);
+      border-radius: var(--radius-2xl);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-xl);
+      animation: slideDown 0.8s ease-out;
+      backdrop-filter: blur(10px);
+    }
+    
+    .gallery-header::before {
+      content: '🏙️📚';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      font-size: 8rem;
+      opacity: 0.08;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .gallery-header h1 {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 3.5rem;
+      margin: 0 0 var(--space-md) 0;
+      font-family: var(--font-secondary);
+      animation: fadeInUp 1s ease-out 0.2s both;
+    }
+    
+    .gallery-header p {
+      color: var(--gray-600);
+      font-size: 1.2rem;
+      margin: 0;
+      animation: fadeInUp 1s ease-out 0.4s both;
     }
 
+    /* Filters with Enhanced Styling */
     .filters {
       display: flex;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 15px;
-      padding-bottom: 20px;
+      gap: var(--space-lg);
+      padding: var(--space-xl);
+      background: var(--white);
+      margin: 0 var(--space-lg) var(--space-2xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.8s ease-out 0.6s both;
+      border: 1px solid var(--gray-200);
     }
 
     .filters select {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--gray-200);
+      font-size: 1rem;
+      background: var(--white);
+      transition: all var(--transition-smooth);
+      min-width: 160px;
+      cursor: pointer;
+      font-family: var(--font-primary);
     }
 
+    .filters select:focus {
+      outline: none;
+      border-color: var(--nyc-blue);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .filters select:hover {
+      border-color: var(--nyc-blue);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Book Gallery Grid */
     .book-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-2xl);
+      padding: var(--space-xl) var(--space-lg);
+      max-width: 1600px;
+      margin: 0 auto;
+      flex: 1;
+      align-items: start;
+      justify-content: center;
     }
 
+    /* Enhanced Book Card */
     .book-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 15px;
-      text-align: center;
-      transition: transform 0.3s ease;
+      background: var(--white);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-lg);
+      padding: var(--space-xl);
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      min-height: 600px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: cardAppear 0.6s ease-out forwards;
+      justify-content: space-between;
+    }
+    
+    .book-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-primary);
+      transition: left var(--transition-smooth);
     }
 
     .book-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: var(--shadow-2xl);
+      border-color: var(--nyc-blue);
+    }
+    
+    .book-card:hover::before {
+      left: 0;
     }
 
-    .book-card img {
-      max-width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .back-btn {
-      background-color: #ff6f61;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      margin: 15px;
-      cursor: pointer;
-    }
-
-    .back-btn:hover {
-      background-color: #e55347;
-    }
-
-    .no-books {
-      text-align: center;
-      font-size: 20px;
-      color: #888;
-      padding: 40px;
-    }
-
-    footer {
-      background-color: #3f51b5;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
-    /* Additional styles for new features */
-    .book-actions {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .rating-display {
-      margin-top: 10px;
-      font-size: 12px;
-    }
-    
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .contact-user-btn {
-      background: #17a2b8;
-      color: white;
-    }
-    
-    .rate-book-btn {
-      background: #ffc107;
-      color: white;
-    }
-    
-    .btn-small:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    /* Enhanced book card and image styles */
-    .book-card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .book-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    
+    /* Book Image Container */
     .book-image-container {
       position: relative;
-      height: 200px;
+      height: 250px;
       overflow: hidden;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-lg);
+      background: var(--gradient-soft);
     }
-    
+
     .book-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 6px;
-      transition: transform 0.5s ease;
+      border-radius: var(--radius-lg);
+      transition: transform var(--transition-smooth);
     }
-    
+
     .book-card:hover img {
-      transform: scale(1.05);
+      transform: scale(1.1);
     }
     
+    /* Image Overlay */
     .image-overlay {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: var(--space-md);
+      right: var(--space-md);
     }
     
     .book-type-badge {
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: bold;
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.025em;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-md);
     }
-    
+
+    /* Book Info */
     .book-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      text-align: left;
     }
     
-    .book-id {
-      font-size: 10px;
-      color: #666;
-      margin-top: auto;
-      text-align: right;
-      padding-top: 10px;
+    .book-info h3 {
+      color: var(--nyc-blue);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0 0 var(--space-md) 0;
+      font-family: var(--font-secondary);
     }
     
+    .book-info p {
+      color: var(--text-dark);
+      margin: var(--space-sm) 0;
+      line-height: 1.6;
+    }
+    
+    .book-info strong {
+      color: var(--nyc-steel);
+      font-weight: 600;
+    }
+
+    /* Condition Badge */
     .condition-badge {
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-size: 11px;
-      font-weight: bold;
+      display: inline-block;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
     }
     
     .condition-badge.new {
-      background-color: #28a745;
-      color: white;
+      background: var(--central-park);
+      color: var(--white);
     }
     
     .condition-badge.good {
-      background-color: #ffc107;
-      color: black;
+      background: var(--taxi-yellow);
+      color: var(--black);
     }
     
     .condition-badge.fair {
-      background-color: #fd7e14;
-      color: white;
+      background: var(--subway-orange);
+      color: var(--white);
     }
     
     .condition-badge.used {
-      background-color: #6c757d;
-      color: white;
+      background: var(--nyc-steel);
+      color: var(--white);
+    }
+
+    /* Rating Display */
+    .rating-display {
+      margin: var(--space-lg) 0;
+      padding: var(--space-md);
+      background: var(--glass-light);
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+    
+    .stars {
+      font-size: 1.2rem;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .rating-text {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    /* Book Actions */
+    .book-actions {
+      margin-top: auto;
+      padding-top: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .btn-small {
+      padding: var(--space-md) var(--space-lg);
+      font-size: 0.875rem;
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-small::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: left var(--transition-normal);
+    }
+    
+    .btn-small:hover::before {
+      left: 100%;
+    }
+    
+    .contact-user-btn {
+      background: var(--nyc-blue);
+      color: var(--white);
+    }
+    
+    .rate-book-btn {
+      background: var(--taxi-yellow);
+      color: var(--black);
     }
     
     .pickup-btn {
-      background: #28a745;
-      color: white;
+      background: var(--central-park);
+      color: var(--white);
     }
     
-    .pickup-btn:hover {
-      background: #218838;
+    .btn-small:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .btn-small:active {
+      transform: translateY(-1px);
+    }
+    
+    /* Book ID */
+    .book-id {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: auto;
+      padding-top: var(--space-md);
+      text-align: right;
+      font-family: var(--font-mono, monospace);
+      opacity: 0.8;
+    }
+
+    /* Loading States */
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top: 3px solid var(--gray-600);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .gallery-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    
+    .loading-text {
+      color: var(--gray-600);
+      font-size: 1.1rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    /* No Books Message */
+    .no-books {
+      text-align: center;
+      padding: var(--space-3xl);
+      background: var(--glass-white);
+      border-radius: var(--radius-2xl);
+      margin: var(--space-2xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--gray-200);
+    }
+    
+    .no-books h3 {
+      color: var(--nyc-blue);
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      font-family: var(--font-secondary);
+    }
+    
+    .no-books p {
+      color: var(--gray-600);
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    .gallery-footer {
+      background: var(--gradient-secondary);
+      color: var(--white);
+      text-align: center;
+      padding: var(--space-2xl) var(--space-lg);
+      margin-top: var(--space-3xl);
+      border-top: 1px solid var(--gray-300);
+      box-shadow: 0 -4px 20px rgba(139, 92, 246, 0.15);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .gallery-footer p {
+      margin: 0;
+      opacity: 0.95;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    /* Animations */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(5deg);
+      }
+    }
+    
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.7;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+    
+    /* Staggered card animation */
+    .book-card:nth-child(1) { animation-delay: 0.1s; }
+    .book-card:nth-child(2) { animation-delay: 0.2s; }
+    .book-card:nth-child(3) { animation-delay: 0.3s; }
+    .book-card:nth-child(4) { animation-delay: 0.4s; }
+    .book-card:nth-child(5) { animation-delay: 0.5s; }
+    .book-card:nth-child(6) { animation-delay: 0.6s; }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: var(--space-md) var(--space-lg);
+      }
+      
+      .navbar-brand {
+        font-size: 1.4rem;
+      }
+      
+      .navbar-menu {
+        gap: var(--space-md);
+      }
+      
+      .gallery-header {
+        margin: var(--space-lg);
+        padding: var(--space-2xl) var(--space-lg);
+      }
+      
+      .gallery-header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .filters {
+        margin: 0 var(--space-lg) var(--space-xl);
+        padding: var(--space-lg);
+        flex-direction: column;
+      }
+      
+      .filters select {
+        min-width: 100%;
+      }
+      
+      .book-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-lg);
+        padding: var(--space-lg) var(--space-md);
+      }
+      
+      .book-card {
+        padding: var(--space-lg);
+        min-height: 550px;
+      }
+      
+      .book-image-container {
+        height: 200px;
+      }
+      
+      .book-info h3 {
+        font-size: 1.2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      main {
+        padding-top: 80px;
+      }
+      
+      .gallery-header h1 {
+        font-size: 2rem;
+      }
+      
+      .gallery-header::before {
+        font-size: 5rem;
+      }
+      
+      .book-gallery {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+        padding: var(--space-md);
+      }
+      
+      .book-card {
+        min-height: 500px;
+        padding: var(--space-md);
+      }
     }
   </style>
-  <link rel="stylesheet" href="/css/features.css">
 </head>
 <body>
-
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">📚 BookSwap</div>
-    <div class="hamburger" id="hamburger">☰</div>
-  </header>
-
-  <!-- Side Menu -->
-  <div id="sideMenu" class="side-menu">
-    <a href="/profile">👤 Profile</a>
-    <a href="/add-book">➕ Add Book</a>
-    <a href="/gallery">📚 Gallery</a>
-    <a href="/pickup-request">🚚 Pickup Request</a>
-  </div>
-
-  <!-- Back Button -->
-  <button id="backBtn" class="back-btn">🔙 Back</button>
-
-  <!-- Filters -->
-  <section class="gallery-header">
-    <h1>Available Books</h1>
-    <div class="filters">
-      <select id="filterGenre">
-        <option value="">Genre</option>
-        <option value="Fiction">Fiction</option>
-        <option value="Science">Science</option>
-        <option value="Self-help">Self-help</option>
-        <option value="Biography">Biography</option>
-        <option value="Inspirational">Inspirational</option>
-        <option value="Travel">Travel</option>
-        <option value="Art">Art</option>
-        <option value="Cooking">Cooking</option>
-        <option value="Business">Business</option>
-        <option value="Architecture">Architecture</option>
-        <option value="History">History</option>
-        <option value="Poetry">Poetry</option>
-        <option value="Drama">Drama</option>
-      </select>
-      <select id="filterCondition">
-        <option value="">Condition</option>
-        <option value="New">New</option>
-        <option value="Used">Used</option>
-      </select>
-      <select id="filterType">
-        <option value="">Type</option>
-        <option value="Donate">Donate</option>
-        <option value="Swap">Swap</option>
-      </select>
+  <!-- NYC Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      🏙️📚 BookSwap
     </div>
-  </section>
+    
+    <!-- Navigation Links -->
+   <ul class="nav-links" id="nav-links">
+            <li><a href="/index">Home</a></li>
+            <li><a href="/add-book">Add Book</a></li>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/pickup-track">Track</a></li>
+            <li><a href="/logout">Logout</a></li>
+    </ul>
+    
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </nav>
 
-  <!-- Book Gallery -->
-  <section class="book-gallery" id="bookGallery">
-    <!-- Books will be loaded here from the database -->
-  </section>
+  <main>
+    <!-- Gallery Header -->
+    <section class="gallery-header">
+      <h1>🏙️ Book Gallery</h1>
+      <p>Discover amazing books shared across the five boroughs</p>
+      
+      <!-- Filters -->
+      <div class="filters">
+        <select id="filterGenre">
+          <option value="">All Genres</option>
+          <option value="Fiction">Fiction</option>
+          <option value="Science">Science</option>
+          <option value="Self-help">Self-help</option>
+          <option value="Biography">Biography</option>
+          <option value="Inspirational">Inspirational</option>
+          <option value="Travel">Travel</option>
+          <option value="Art">Art</option>
+          <option value="Cooking">Cooking</option>
+          <option value="Business">Business</option>
+          <option value="Architecture">Architecture</option>
+          <option value="History">History</option>
+          <option value="Poetry">Poetry</option>
+          <option value="Drama">Drama</option>
+          <option value="Romance">Romance</option>
+          <option value="Mystery">Mystery</option>
+          <option value="Fantasy">Fantasy</option>
+        </select>
+        <select id="filterCondition">
+          <option value="">All Conditions</option>
+          <option value="New">New</option>
+          <option value="Good">Good</option>
+          <option value="Fair">Fair</option>
+          <option value="Used">Used</option>
+        </select>
+        <select id="filterType">
+          <option value="">All Types</option>
+          <option value="Donate">Donations</option>
+          <option value="Swap">Swaps</option>
+        </select>
+      </div>
+    </section>
 
-  <!-- No books message -->
-  <div class="no-books" id="noBooksMessage" style="display:none;">
-    No books found matching your filters.
-  </div>
+    <!-- Loading State -->
+    <div class="gallery-loading" id="galleryLoading" style="display: none;">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading amazing books...</div>
+    </div>
+
+    <!-- Book Gallery -->
+    <section class="book-gallery" id="bookGallery">
+      <!-- Books will be loaded here from the database -->
+    </section>
+
+    <!-- No books message -->
+    <div class="no-books" id="noBooksMessage" style="display:none;">
+      <h3>📚 No Books Found</h3>
+      <p>Try adjusting your filters to discover more books, or check back later for new additions.</p>
+    </div>
+  </main>
 
   <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 BookSwap Platform | Built with ❤️</p>
+  <footer class="gallery-footer">
+    <p>&copy; 2025 Book Swap and Donate | Connecting readers across the five boroughs 🏙️📚</p>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- Enhanced Chatbot Integration -->
+  <script src="/js/chatbot.js"></script>
+
+  <!-- Gallery JavaScript -->
   <script>
-    let allBooks = []; // Store all books for filtering
+    let allBooks = [];
+    let isLoading = false;
 
-    // Hamburger Menu Toggle
-    const hamburger = document.getElementById("hamburger");
-    const sideMenu = document.getElementById("sideMenu");
+    // Show loading state
+    function showLoading() {
+      document.getElementById('galleryLoading').style.display = 'block';
+      document.getElementById('bookGallery').style.display = 'none';
+      document.getElementById('noBooksMessage').style.display = 'none';
+    }
 
-    hamburger.addEventListener("click", () => {
-      sideMenu.classList.toggle("show");
-    });
+    // Hide loading state
+    function hideLoading() {
+      document.getElementById('galleryLoading').style.display = 'none';
+      document.getElementById('bookGallery').style.display = 'grid';
+    }
 
-    window.addEventListener("click", (e) => {
-      if (!sideMenu.contains(e.target) && !hamburger.contains(e.target)) {
-        sideMenu.classList.remove("show");
-      }
-    });
-
-    // Load books from database
+    // Load books from database with loading state
     async function loadBooks(filters = {}) {
+      if (isLoading) return;
+      
+      isLoading = true;
+      showLoading();
+      
       try {
         const queryParams = new URLSearchParams(filters).toString();
         const response = await fetch(`/api/books?${queryParams}`);
@@ -377,6 +820,7 @@
         
         if (data.success) {
           allBooks = data.books;
+          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay for smooth UX
           displayBooks(data.books);
         } else {
           console.error('Error loading books:', data.message);
@@ -384,11 +828,14 @@
         }
       } catch (error) {
         console.error('Error fetching books:', error);
-        showNoBooks('Unable to load books. Please try again later.');
+        showNoBooks('Unable to connect to server. Please check your connection and try again.');
+      } finally {
+        isLoading = false;
+        hideLoading();
       }
     }
 
-    // Display books in the gallery
+    // Display books in the gallery with animations
     function displayBooks(books) {
       const gallery = document.getElementById('bookGallery');
       const noBooksMsg = document.getElementById('noBooksMessage');
@@ -401,8 +848,8 @@
       
       noBooksMsg.style.display = 'none';
       
-      // Create book cards with placeholder images first
-      gallery.innerHTML = books.map(book => {
+      // Create book cards
+      gallery.innerHTML = books.map((book, index) => {
         const bookId = book._id ? book._id.slice(-6) : 'N/A';
         const ownerInfo = book.userId ? ` | Owner: ${book.userId.username}` : '';
         const averageRating = book.averageRating || 0;
@@ -411,20 +858,14 @@
         // Generate star display
         const starDisplay = generateStars(averageRating);
         
-        // Create initial image URL - try uploaded image first, then fallback to themed image
-        let imageUrl = createThemedBookImage(book.title || 'Book', book.author || '', book.genre || 'Book');
-        
-        // If book has an uploaded image, use it
-        if (book.image && book.image.startsWith('/uploads')) {
-          imageUrl = book.image;
-        }
-        
-        // Fallback image for error handling
-        const fallbackImage = createThemedBookImage(book.title || 'Book', book.author || '', book.genre || 'Book');
+        // Handle book image
+        let imageUrl = book.image && book.image.startsWith('/uploads') 
+          ? book.image 
+          : createPlaceholderImage(book.title, book.genre);
         
         // Truncate long text
-        const displayTitle = truncateText(book.title || 'Untitled', 25);
-        const displayAuthor = truncateText(book.author || 'Unknown', 20);
+        const displayTitle = truncateText(book.title || 'Untitled', 30);
+        const displayAuthor = truncateText(book.author || 'Unknown Author', 25);
         
         return `
           <div class="book-card" 
@@ -436,23 +877,22 @@
             <div class="book-image-container">
               <img src="${imageUrl}" 
                    alt="${book.title || 'Book'}" 
-                   onerror="handleImageError(this, '${fallbackImage}');"
-                   onload="this.style.opacity='1';" 
-                   style="opacity:0; transition: opacity 0.5s ease;">
+                   onerror="this.src='${createPlaceholderImage(book.title, 'Book')}'"
+                   loading="lazy">
               
               <div class="image-overlay">
-                <span class="book-type-badge">${book.type ? book.type.toUpperCase() : 'N/A'}</span>
+                <span class="book-type-badge">${book.type ? book.type.toUpperCase() : 'BOOK'}</span>
               </div>
             </div>
             
             <div class="book-info">
               <h3 title="${book.title}">${displayTitle}</h3>
               <p><strong>Author:</strong> <span title="${book.author}">${displayAuthor}</span></p>
-              <p><strong>Genre:</strong> ${book.genre || 'N/A'}</p>
+              <p><strong>Genre:</strong> ${book.genre || 'General'}</p>
               <p><strong>Condition:</strong> 
                 <span class="condition-badge ${(book.condition || '').toLowerCase()}">${book.condition || 'N/A'}</span>
               </p>
-              <p><strong>Location:</strong> ${book.location || 'N/A'}${ownerInfo}</p>
+              <p><strong>Location:</strong> ${book.location || 'NYC'}${ownerInfo}</p>
               
               <!-- Rating Display -->
               <div class="rating-display">
@@ -462,27 +902,84 @@
               
               <!-- Book Actions -->
               <div class="book-actions">
-                <button class="rate-book-btn btn-small" onclick="showRatingModal('${book._id}', '${book.title}')">
+                <button class="rate-book-btn btn-small" onclick="showRatingModal('${book._id}', '${escapeHtml(book.title)}')">
                   ⭐ Rate Book
                 </button>
                 ${book.userId && book.userId._id ? `
-                  <button class="contact-user-btn btn-small" onclick="contactUser('${book.userId._id}', '${book.userId.username}')">
+                  <button class="contact-user-btn btn-small" onclick="contactUser('${book.userId._id}', '${escapeHtml(book.userId.username)}')">
                     💬 Contact Owner
                   </button>
                 ` : ''}
-                <button class="pickup-btn btn-small" onclick="requestPickup('${book._id}', '${book.title}')">
+                <button class="pickup-btn btn-small" onclick="requestPickup('${book._id}', '${escapeHtml(book.title)}')">
                   📦 Request Pickup
                 </button>
               </div>
               
-              <div class="book-id">ID: BOOK-${bookId}</div>
+              <div class="book-id">ID: NYC-${bookId}</div>
             </div>
           </div>
         `;
       }).join('');
       
-      // Load ratings for visible books
-      loadBookRatings(books);
+      // Trigger card animations
+      const cards = gallery.querySelectorAll('.book-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    }
+
+    // Utility Functions
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function truncateText(text, maxLength) {
+      return text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+    
+    function createPlaceholderImage(title, genre) {
+      // Create a simple data URI placeholder with book info
+      const canvas = document.createElement('canvas');
+      canvas.width = 300;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      
+      // Gradient background based on genre
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      const colors = getGenreColors(genre);
+      gradient.addColorStop(0, colors.start);
+      gradient.addColorStop(1, colors.end);
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 300, 400);
+      
+      // Add book icon
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = 'bold 48px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('📚', 150, 200);
+      
+      // Add title
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 16px Arial';
+      ctx.fillText(truncateText(title || 'Book', 20), 150, 250);
+      
+      return canvas.toDataURL();
+    }
+    
+    function getGenreColors(genre) {
+      const genreColors = {
+        'Fiction': { start: '#667eea', end: '#764ba2' },
+        'Science': { start: '#f093fb', end: '#f5576c' },
+        'Biography': { start: '#4facfe', end: '#00f2fe' },
+        'History': { start: '#43e97b', end: '#38f9d7' },
+        'Romance': { start: '#fa709a', end: '#fee140' },
+        'Mystery': { start: '#30cfd0', end: '#91a7ff' },
+        'Fantasy': { start: '#a8edea', end: '#fed6e3' }
+      };
+      return genreColors[genre] || { start: '#667eea', end: '#764ba2' };
     }
 
     // Show no books message
@@ -491,55 +988,46 @@
       const noBooksMsg = document.getElementById('noBooksMessage');
       
       gallery.innerHTML = '';
-      noBooksMsg.textContent = message;
+      noBooksMsg.querySelector('p').textContent = message;
       noBooksMsg.style.display = 'block';
     }
 
-    // Filter books locally (client-side filtering)
+    // Enhanced filter function with smooth transitions
     function filterBooks() {
       const genre = document.getElementById('filterGenre').value;
       const condition = document.getElementById('filterCondition').value;
       const type = document.getElementById('filterType').value;
       
-      let filteredBooks = allBooks;
+      let filteredBooks = allBooks.filter(book => {
+        const genreMatch = !genre || (book.genre && book.genre.toLowerCase().includes(genre.toLowerCase()));
+        const conditionMatch = !condition || (book.condition && book.condition.toLowerCase().includes(condition.toLowerCase()));
+        const typeMatch = !type || (book.type && book.type.toLowerCase().includes(type.toLowerCase()));
+        
+        return genreMatch && conditionMatch && typeMatch;
+      });
       
-      if (genre) {
-        filteredBooks = filteredBooks.filter(book => 
-          book.genre && book.genre.toLowerCase().includes(genre.toLowerCase())
-        );
-      }
+      // Add smooth transition
+      const gallery = document.getElementById('bookGallery');
+      gallery.style.opacity = '0.5';
       
-      if (condition) {
-        filteredBooks = filteredBooks.filter(book => 
-          book.condition && book.condition.toLowerCase().includes(condition.toLowerCase())
-        );
-      }
-      
-      if (type) {
-        filteredBooks = filteredBooks.filter(book => 
-          book.type && book.type.toLowerCase().includes(type.toLowerCase())
-        );
-      }
-      
-      displayBooks(filteredBooks);
+      setTimeout(() => {
+        displayBooks(filteredBooks);
+        gallery.style.opacity = '1';
+      }, 150);
     }
 
-    // Add event listeners to filters
-    document.getElementById('filterGenre').addEventListener('change', filterBooks);
-    document.getElementById('filterCondition').addEventListener('change', filterBooks);
-    document.getElementById('filterType').addEventListener('change', filterBooks);
+    // Add event listeners to filters with debounce
+    let filterTimeout;
+    function debounceFilter() {
+      clearTimeout(filterTimeout);
+      filterTimeout = setTimeout(filterBooks, 200);
+    }
+    
+    document.getElementById('filterGenre').addEventListener('change', debounceFilter);
+    document.getElementById('filterCondition').addEventListener('change', debounceFilter);
+    document.getElementById('filterType').addEventListener('change', debounceFilter);
 
-    // Back Button
-    const backBtn = document.getElementById("backBtn");
-    backBtn.addEventListener("click", () => {
-      if (document.referrer && document.referrer !== window.location.href) {
-        history.back();
-      } else {
-        window.location.href = "/index"; // fallback if no referrer
-      }
-    });
-
-    // Generate stars display
+    // Generate enhanced star display
     function generateStars(rating) {
       const fullStars = Math.floor(rating);
       const hasHalfStar = rating % 1 >= 0.5;
@@ -547,245 +1035,102 @@
       
       let stars = '';
       for (let i = 0; i < fullStars; i++) stars += '⭐';
-      if (hasHalfStar) stars += '💫';
+      if (hasHalfStar) stars += '🌟'; // Different star for half
       for (let i = 0; i < emptyStars; i++) stars += '☆';
       
       return stars;
     }
     
-    // Load book ratings (placeholder for now, will be handled by ratings.js)
-    function loadBookRatings(books) {
-      // This will be implemented in ratings.js
-      console.log('Loading ratings for', books.length, 'books');
-    }
-    
-    // Contact user placeholder
+    // Enhanced contact user function
     function contactUser(userId, username) {
-      // This will be implemented in messaging.js
       console.log('Contact user:', userId, username);
-      alert(`Feature coming soon! Contact ${username}`);
+      // Show a nice modal instead of alert
+      if (confirm(`Would you like to contact ${username} about their book?\n\nThis will redirect you to the messaging system.`)) {
+        window.location.href = `/profile?contact=${userId}&username=${encodeURIComponent(username)}`;
+      }
     }
 
-    // Request pickup placeholder
+    // Enhanced pickup request function
     function requestPickup(bookId, bookTitle) {
       console.log('Request pickup:', bookId, bookTitle);
-      if (confirm(`Request pickup for "${bookTitle}"?`)) {
+      if (confirm(`Request pickup for "${bookTitle}"?\n\nYou'll be redirected to the pickup request form.`)) {
         window.location.href = `/pickup-request?bookId=${bookId}&title=${encodeURIComponent(bookTitle)}`;
       }
     }
 
-    // Show rating modal placeholder
+    // Enhanced rating modal function
     function showRatingModal(bookId, bookTitle) {
       console.log('Show rating modal:', bookId, bookTitle);
-      alert(`Rating feature for "${bookTitle}" coming soon!`);
-    }
-
-    // Image handling functions
-    async function getBookImageUrl(book) {
-      // If user uploaded their own image, use it
-      if (book && book.image && book.image.startsWith('/uploads')) {
-        return book.image;
-      }
-      
-      // Otherwise, try to get the real book cover
-      if (book && book.title) {
-        try {
-          const response = await fetch(`/api/book-image/${encodeURIComponent(book.title)}/${encodeURIComponent(book.author || '')}`);
-          const data = await response.json();
-          
-          if (data.success && data.imageUrl) {
-            return data.imageUrl;
-          }
-        } catch (error) {
-          console.error('Failed to fetch book cover:', error);
-        }
-      }
-      
-      // Fallback to themed image
-      return createThemedBookImage(book?.title || 'Book', book?.author || '', book?.genre || 'Book');
+      // For now, redirect to a rating page or show coming soon
+      alert(`Rate "${bookTitle}"\n\nRating system coming soon! You'll be able to rate books to help other readers.`);
     }
     
-    // Create themed book image based on title, author, and genre
-    function createThemedBookImage(title, author, genre) {
-      const themes = {
-        'fiction': { color: '#4a90e2', emoji: '📖' },
-        'biography': { color: '#f39c12', emoji: '👤' },
-        'history': { color: '#d35400', emoji: '🏛️' },
-        'science': { color: '#27ae60', emoji: '🔬' },
-        'self-help': { color: '#16a085', emoji: '🎯' },
-        'business': { color: '#34495e', emoji: '💼' },
-        'cooking': { color: '#e67e22', emoji: '👨‍🍳' },
-        'travel': { color: '#3498db', emoji: '✈️' },
-        'art': { color: '#e74c3c', emoji: '🎨' },
-        'romance': { color: '#e74c3c', emoji: '💕' },
-        'mystery': { color: '#8e44ad', emoji: '🔍' },
-        'thriller': { color: '#2c3e50', emoji: '⚡' },
-        'fantasy': { color: '#9b59b6', emoji: '🧙‍♂️' },
-        'poetry': { color: '#f1c40f', emoji: '✍️' }
-      };
-      
-      const theme = themes[genre.toLowerCase()] || { color: '#6c757d', emoji: '📚' };
-      const cleanTitle = truncateText(title, 20);
-      const cleanAuthor = truncateText(author, 15);
-      
-      const svg = `
-        <svg width="300" height="450" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="bookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:${theme.color};stop-opacity:0.8" />
-              <stop offset="100%" style="stop-color:${theme.color};stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <rect width="300" height="450" fill="url(#bookGrad)" rx="8" ry="8"/>
-          <text x="50%" y="80" font-family="Arial" font-size="40" text-anchor="middle" fill="white">${theme.emoji}</text>
-          <text x="50%" y="200" font-family="Georgia" font-size="18" font-weight="bold" text-anchor="middle" fill="white">${cleanTitle}</text>
-          ${author ? `<text x="50%" y="240" font-family="Arial" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.9)">by ${cleanAuthor}</text>` : ''}
-          <text x="50%" y="400" font-family="Arial" font-size="12" text-anchor="middle" fill="rgba(255,255,255,0.7)">BookSwap</text>
-        </svg>
-      `;
-      
-      return 'data:image/svg+xml;base64,' + btoa(svg);
-    }
-
-    // Genre-based fallback images
-    function getGenreFallbackImage(genre) {
-      const genreFallbacks = {
-        'Fiction': 'https://via.placeholder.com/300x400/4a90e2/ffffff?text=FICTION',
-        'Biography': 'https://via.placeholder.com/300x400/f5a623/ffffff?text=BIOGRAPHY',
-        'Science': 'https://via.placeholder.com/300x400/9013fe/ffffff?text=SCIENCE',
-        'Self-help': 'https://via.placeholder.com/300x400/4bd863/ffffff?text=SELF+HELP',
-        'Art': 'https://via.placeholder.com/300x400/e74c3c/ffffff?text=ART',
-        'Architecture': 'https://via.placeholder.com/300x400/34495e/ffffff?text=ARCHITECTURE',
-        'Cooking': 'https://via.placeholder.com/300x400/e67e22/ffffff?text=COOKING',
-        'Travel': 'https://via.placeholder.com/300x400/3498db/ffffff?text=TRAVEL',
-        'Business': 'https://via.placeholder.com/300x400/2c3e50/ffffff?text=BUSINESS'
-      };
-      
-      return genreFallbacks[genre] || 'https://via.placeholder.com/300x400/3f51b5/ffffff?text=BOOK';
-    }
-
-    // Create a data URI image for fallbacks
-    function createDataURIImage(genre, width = 300, height = 400) {
-      const colors = {
-        'Fiction': '#4a90e2',
-        'Biography': '#f5a623', 
-        'Science': '#9013fe',
-        'Self-help': '#4bd863',
-        'Art': '#e74c3c',
-        'Architecture': '#34495e',
-        'Cooking': '#e67e22',
-        'Travel': '#3498db',
-        'Business': '#2c3e50'
-      };
-      
-      const color = colors[genre] || '#6c757d';
-      
-      // Create SVG as data URI
-      const svg = `
-        <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-          <rect width="${width}" height="${height}" fill="${color}"/>
-          <text x="50%" y="45%" font-family="Arial, sans-serif" font-size="24" font-weight="bold" 
-                text-anchor="middle" fill="white">${genre || 'BOOK'}</text>
-          <text x="50%" y="60%" font-family="Arial, sans-serif" font-size="16" 
-                text-anchor="middle" fill="white">No Image</text>
-        </svg>
-      `;
-      
-      return 'data:image/svg+xml;base64,' + btoa(svg);
-    }
-
-    // Handle image load errors with multiple fallbacks
-    function handleImageError(imgElement, fallbackSrc) {
-      console.log(`Image failed to load: ${imgElement.src}`);
-      
-      // Prevent infinite loops
-      if (imgElement.dataset.errorHandled === 'true') {
-        console.log('Error already handled for this image');
-        return;
-      }
-      
-      imgElement.dataset.errorHandled = 'true';
-      
-      // Check if the URL has duplication issues
-      if (imgElement.src.includes('http://localhost:3000http://localhost:3000')) {
-        const correctedUrl = imgElement.src.replace('http://localhost:3000http://localhost:3000', 'http://localhost:3000');
-        console.log(`Fixing duplicated URL: ${correctedUrl}`);
-        imgElement.src = correctedUrl;
-        imgElement.dataset.errorHandled = 'false';
-        return;
-      }
-      
-      // Try with corrected local URL path
-      if (!imgElement.dataset.retried && imgElement.src.includes('/uploads')) {
-        imgElement.dataset.retried = 'true';
-        
-        // Try different URL formats
-        let newUrl = imgElement.src;
-        if (imgElement.src.startsWith('/uploads')) {
-          newUrl = window.location.origin + imgElement.src;
-        } else if (!imgElement.src.startsWith('http')) {
-          newUrl = window.location.origin + '/uploads/' + imgElement.src;
-        }
-        
-        console.log(`Retrying with URL: ${newUrl}`);
-        imgElement.src = newUrl;
-        imgElement.dataset.errorHandled = 'false';
-        return;
-      }
-      
-      // Final fallback: Use data URI SVG image
-      console.log('Using data URI SVG fallback');
-      
-      const bookCard = imgElement.closest('.book-card');
-      const genre = bookCard ? bookCard.dataset.genre : 'Book';
-      
-      // Create data URI image that cannot fail to load
-      const dataURI = createDataURIImage(genre);
-      imgElement.src = dataURI;
-      imgElement.style.opacity = '1';
-      
-      // This should never fail, but just in case, replace with div
-      imgElement.onerror = function() {
-        console.log('Data URI fallback failed, creating div placeholder');
-        const placeholder = document.createElement('div');
-        placeholder.style.cssText = `
-          width: 100%;
-          height: 200px;
-          background: linear-gradient(135deg, #6c757d, #495057);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-family: Arial, sans-serif;
-          border-radius: 6px;
-        `;
-        
-        placeholder.innerHTML = `
-          <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">${genre}</div>
-          <div style="font-size: 14px;">No Image Available</div>
-        `;
-        
-        imgElement.parentNode.replaceChild(placeholder, imgElement);
-      };
-    }
-
-    // Truncate text function for long titles or authors
-    function truncateText(text, maxLength) {
-      if (!text) return '';
-      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    }
-
-    // Load books when page loads
-    document.addEventListener('DOMContentLoaded', () => {
+    // Initialize gallery when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log(' Book Gallery initialized');
       loadBooks();
+      
+      // Add smooth scrolling for any anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
+    
+    // Add some user feedback for interactions
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('btn-small')) {
+        e.target.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          e.target.style.transform = '';
+        }, 150);
+      }
     });
   </script>
-
-  <!-- Feature Scripts -->
-  <script src="/js/ratings.js"></script>
-  <script src="/js/messaging.js"></script>
-  <script src="/js/notifications.js"></script>
-
+  
+  <!-- Enhanced Chatbot Integration -->
+  <script src="/js/chatbot.js"></script>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+    // Navigation menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const navLinks = document.getElementById('nav-links');
+      
+      if (hamburgerMenu && navLinks) {
+        hamburgerMenu.addEventListener('click', function() {
+          hamburgerMenu.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        const menuLinks = navLinks.querySelectorAll('a');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+        
+        document.addEventListener('click', function(event) {
+          const isClickInsideNav = navLinks.contains(event.target);
+          const isClickOnHamburger = hamburgerMenu.contains(event.target);
+          
+          if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+            hamburgerMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+  
 </body>
 </html>

@@ -56,6 +56,7 @@ app.use((req, res, next) => {
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 // ✅ API routes
 app.use('/api', apiRoutes);
@@ -63,8 +64,8 @@ app.use('/api', apiRoutes);
 // 🤖 Chatbot API route
 app.use('/api/chatbot', require('./utils/chatbot'));
 
-// 🤖 GET: Chatbot endpoint for testing
-app.post('/api/chatbot', (req, res) => {
+// 🤖 Backup chatbot endpoint (if utils/chatbot fails)
+app.post('/api/chatbot-backup', (req, res) => {
   const { message } = req.body;
   
   if (!message) {
@@ -163,11 +164,22 @@ app.get('/add-book', (req, res) => {
 });
 
 app.get('/gallery', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'enhanced-gallery.html'));
-});
-
-app.get('/gallery-old', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'gallery.html'));
+  try {
+    const filePath = path.join(__dirname, 'views', 'gallery.html');
+    console.log('📖 Gallery route accessed, file path:', filePath);
+    
+    // Check if file exists before sending
+    const fs = require('fs');
+    if (!fs.existsSync(filePath)) {
+      console.error('❌ Gallery file not found at:', filePath);
+      return res.status(404).send('Gallery file not found');
+    }
+    
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('❌ Error serving gallery:', error.message);
+    res.status(500).send('Internal server error');
+  }
 });
 
 app.get('/pickup-request', (req, res) => {
@@ -181,6 +193,14 @@ app.get('/pickup', (req, res) => {
 
 app.get('/Pickup', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'pickup.html'));
+});
+
+app.get('/pickup-track', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'pickup-track.html'));
+});
+
+app.get('/otp-verification', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'otp-verification.html'));
 });
 
 app.get('/chatbot', (req, res) => {
@@ -213,10 +233,7 @@ app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-register.html'));
 });
 
-// Debug routes for testing images
-app.get('/test-gallery-images', (req, res) => {
-  res.sendFile(path.join(__dirname, 'test-gallery-images.html'));
-});
+// Removed obsolete test gallery routes
 
 app.get('/test-image', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'test-image.html'));
@@ -226,9 +243,7 @@ app.get('/image-test', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'image-test.html'));
 });
 
-app.get('/debug-gallery', (req, res) => {
-  res.sendFile(path.join(__dirname, 'debug-gallery.html'));
-});
+// Removed obsolete debug-gallery route
 
 app.get('/test-image-urls', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-image-urls.html'));
