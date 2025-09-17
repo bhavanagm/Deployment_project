@@ -68,34 +68,38 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
-                    script {
-                        sh """
-                            echo "🔄 Updating kubeconfig..."
-                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig $KUBECONFIG
+    steps {
+        withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
+            script {
+                sh """
+                    echo "🔄 Updating kubeconfig..."
+                    mkdir -p \$WORKSPACE/.kube
+                    export KUBECONFIG=\$WORKSPACE/.kube/config
+                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig \$WORKSPACE/.kube/config
 
-                            echo "✅ Verifying cluster access..."
-                            kubectl get nodes || exit 1
+                    echo "✅ Verifying cluster access..."
+                    kubectl get nodes
 
-                            echo "🚀 Deploying to Kubernetes..."
-                            kubectl apply -f mongodb-deployment.yaml
-                            kubectl apply -f app-deployment.yaml
-                            kubectl set image deployment/donate-books-app donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG}
+                    echo "🚀 Deploying to Kubernetes..."
+                    kubectl apply -f mongodb-deployment.yaml
+                    kubectl apply -f app-deployment.yaml
+                    kubectl set image deployment/donate-books-app \\
+                        donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG}
 
-                            echo "⏳ Waiting for deployments to complete..."
-                            kubectl rollout status deployment/mongodb --timeout=300s
-                            kubectl rollout status deployment/donate-books-app --timeout=300s
+                    echo "⏳ Waiting for deployments..."
+                    kubectl rollout status deployment/mongodb --timeout=300s
+                    kubectl rollout status deployment/donate-books-app --timeout=300s
 
-                            echo "📊 Deployment status:"
-                            kubectl get deployments
-                            kubectl get services
-                            kubectl get pods
-                        """
-                    }
-                }
+                    echo "📊 Deployment status:"
+                    kubectl get deployments
+                    kubectl get services
+                    kubectl get pods
+                """
             }
         }
+    }
+}
+        
 
         stage('Get LoadBalancer URL') {
             steps {
