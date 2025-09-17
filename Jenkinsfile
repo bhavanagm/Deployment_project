@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE     = "bhavanagm15/donatebooks-app"
         DOCKER_TAG       = "${BUILD_NUMBER}"
-        EKS_CLUSTER_NAME = "bhavana-cluster"
+        EKS_CLUSTER_NAME = "Bhavana-cluster"
         AWS_REGION       = "us-east-2"
     }
     stages {
