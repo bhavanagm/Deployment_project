@@ -5,6 +5,7 @@ pipeline {
         DOCKER_TAG       = "${BUILD_NUMBER}"
         EKS_CLUSTER_NAME = "Bhavana-cluster"
         AWS_REGION       = "us-east-2"
+        KUBECONFIG       = "/var/lib/jenkins/.kube/config"
     }
     stages {
         stage('Checkout') {
@@ -14,7 +15,7 @@ pipeline {
                     url: 'https://github.com/bhavanagm/Deployment_project.git'
             }
         }
- 
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -24,24 +25,17 @@ pipeline {
                 }
             }
         }
- 
+
         stage('Docker Compose Test') {
             steps {
                 script {
                     echo "🧪 Testing with Docker Compose..."
                     sh """
-                        # Clean up existing containers
                         docker-compose down -v
- 
-                        # Build and start services
                         docker-compose build
                         docker-compose up -d
- 
-                        # Wait for services to be ready
                         sleep 30
                         docker-compose ps
- 
-                        # Test application health
                         i=1
                         while [ \$i -le 5 ]; do
                             if curl -f http://localhost:3000 2>/dev/null; then
@@ -52,14 +46,12 @@ pipeline {
                             i=\$((i+1))
                             sleep 10
                         done
- 
-                        # Show logs for debugging
                         docker-compose logs --tail=10 app
                     """
                 }
             }
         }
- 
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -74,28 +66,27 @@ pipeline {
                 }
             }
         }
- 
+
         stage('Deploy to Kubernetes') {
             steps {
                 withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
                     script {
                         sh """
                             echo "🔄 Updating kubeconfig..."
-                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}
- 
+                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig $KUBECONFIG
+
+                            echo "✅ Verifying cluster access..."
+                            kubectl get nodes || exit 1
+
                             echo "🚀 Deploying to Kubernetes..."
-                            # Deploy MongoDB first
                             kubectl apply -f mongodb-deployment.yaml
- 
-                            # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
-                            kubectl set image deployment/donate-books-app \\
-                                donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG}
- 
+                            kubectl set image deployment/donate-books-app donate-books-app=${DOCKER_IMAGE}:${DOCKER_TAG}
+
                             echo "⏳ Waiting for deployments to complete..."
                             kubectl rollout status deployment/mongodb --timeout=300s
                             kubectl rollout status deployment/donate-books-app --timeout=300s
- 
+
                             echo "📊 Deployment status:"
                             kubectl get deployments
                             kubectl get services
@@ -105,20 +96,20 @@ pipeline {
                 }
             }
         }
- 
+
         stage('Get LoadBalancer URL') {
             steps {
                 withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
                     script {
                         sh """
                             echo "🌐 Getting LoadBalancer URL..."
-                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}
- 
+                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig $KUBECONFIG
+
                             i=1
                             while [ \$i -le 10 ]; do
                                 EXTERNAL_IP=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
                                 EXTERNAL_HOSTNAME=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
- 
+
                                 if [ ! -z "\$EXTERNAL_IP" ]; then
                                     echo "🌐 Application URL: http://\$EXTERNAL_IP"
                                     break
@@ -126,13 +117,12 @@ pipeline {
                                     echo "🌐 Application URL: http://\$EXTERNAL_HOSTNAME"
                                     break
                                 fi
- 
+
                                 echo "⏳ Waiting for LoadBalancer... attempt \$i/10"
                                 i=\$((i+1))
                                 sleep 20
                             done
- 
-                            # Show final service status
+
                             kubectl get service donate-books-service
                             echo "✅ Deployment completed successfully!"
                         """
