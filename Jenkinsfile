@@ -99,48 +99,41 @@ pipeline {
         }
     }
 }
-        
+stage('Get LoadBalancer URL') {
+    steps {
+        withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
+            script {
+                sh """
+                    export KUBECONFIG=$WORKSPACE/.kube/config
+                    echo "🌐 Getting LoadBalancer URL..."
+                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig \$KUBECONFIG
 
-        stage('Get LoadBalancer URL') {
-            steps {
-                withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
-                    script {
-                        sh """
-                            echo "🌐 Getting LoadBalancer URL..."
-                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig $KUBECONFIG
+                    i=1
+                    while [ \$i -le 10 ]; do
+                        EXTERNAL_IP=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
+                        EXTERNAL_HOSTNAME=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
 
-                            i=1
-                            while [ \$i -le 10 ]; do
-                                EXTERNAL_IP=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
-                                EXTERNAL_HOSTNAME=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+                        if [ ! -z "\$EXTERNAL_IP" ]; then
+                            echo "🌐 Application URL: http://\$EXTERNAL_IP"
+                            break
+                        elif [ ! -z "\$EXTERNAL_HOSTNAME" ]; then
+                            echo "🌐 Application URL: http://\$EXTERNAL_HOSTNAME"
+                            break
+                        fi
 
-                                if [ ! -z "\$EXTERNAL_IP" ]; then
-                                    echo "🌐 Application URL: http://\$EXTERNAL_IP"
-                                    break
-                                elif [ ! -z "\$EXTERNAL_HOSTNAME" ]; then
-                                    echo "🌐 Application URL: http://\$EXTERNAL_HOSTNAME"
-                                    break
-                                fi
+                        echo "⏳ Waiting for LoadBalancer... attempt \$i/10"
+                        i=\$((i+1))
+                        sleep 20
+                    done
 
-                                echo "⏳ Waiting for LoadBalancer... attempt \$i/10"
-                                i=\$((i+1))
-                                sleep 20
-                            done
-
-                            kubectl get service donate-books-service
-                            echo "✅ Deployment completed successfully!"
-                        """
-                    }
-                }
+                    kubectl get service donate-books-service
+                    echo "✅ Deployment completed successfully!"
+                """
             }
         }
     }
-    post {
-        success {
-            echo "✅ Deployment successful!"
-        }
-        failure {
-            echo "❌ Deployment failed!"
-        }
-    }
 }
+        
+
+       
+     
