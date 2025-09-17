@@ -5,9 +5,8 @@ pipeline {
         DOCKER_TAG       = "${BUILD_NUMBER}"
         EKS_CLUSTER_NAME = "Bhavana-cluster"
         AWS_REGION       = "us-east-2"
-        KUBECONFIG       = "$WORKSPACE/.kube/config"
+        KUBECONFIG       = "/var/lib/jenkins/.kube/config"  // persistent kubeconfig
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -74,8 +73,8 @@ pipeline {
                     script {
                         sh """
                             echo "🔄 Updating kubeconfig..."
-                            mkdir -p \$WORKSPACE/.kube
-                            export KUBECONFIG=\$WORKSPACE/.kube/config
+                            mkdir -p /var/lib/jenkins/.kube
+                            export KUBECONFIG=/var/lib/jenkins/.kube/config
                             aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME} --kubeconfig \$KUBECONFIG
 
                             echo "✅ Verifying cluster access..."
@@ -106,13 +105,14 @@ pipeline {
                 withAWS(credentials: 'aws_credentials', region: "${AWS_REGION}") {
                     script {
                         sh """
-                            export KUBECONFIG=\$WORKSPACE/.kube/config
+                            export KUBECONFIG=/var/lib/jenkins/.kube/config
                             echo "🌐 Getting LoadBalancer URL..."
+
                             i=1
                             while [ \$i -le 10 ]; do
                                 EXTERNAL_IP=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
                                 EXTERNAL_HOSTNAME=\$(kubectl get service donate-books-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
-                                
+
                                 if [ ! -z "\$EXTERNAL_IP" ]; then
                                     echo "🌐 Application URL: http://\$EXTERNAL_IP"
                                     break
@@ -120,7 +120,7 @@ pipeline {
                                     echo "🌐 Application URL: http://\$EXTERNAL_HOSTNAME"
                                     break
                                 fi
-                                
+
                                 echo "⏳ Waiting for LoadBalancer... attempt \$i/10"
                                 i=\$((i+1))
                                 sleep 20
